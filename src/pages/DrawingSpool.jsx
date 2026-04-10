@@ -6,7 +6,7 @@ import StartPopup from '../components/StartPopup'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchSpoolsDrawing, resetSpoolDrawingDetails } from '../redux/slice/spoolSlice'
 import { pauseAndResumeTask, reportTask, startAndComplateTask } from '../redux/slice/taskSlice'
-import { toast } from 'react-toastify'
+import { toast } from 'react-hot-toast'
 const imagebaseUrl = import.meta.env.VITE_IMAGE_URL;
 
 const getActionFromBarcode = (code) => {

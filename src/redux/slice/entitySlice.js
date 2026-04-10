@@ -1,7 +1,7 @@
 // store/entitySlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import * as api from "../api";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getAllEntity = createAsyncThunk(

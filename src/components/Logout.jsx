@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { resetEntityState, setEntity } from "../redux/slice/entitySlice";
 

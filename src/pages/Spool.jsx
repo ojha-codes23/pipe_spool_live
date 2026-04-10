@@ -7,7 +7,7 @@ import Pagination from "../commanComponents/Pagination";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { spoolByProject } from "../redux/slice/projectSlice";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const status = [
   "ready_to_start",

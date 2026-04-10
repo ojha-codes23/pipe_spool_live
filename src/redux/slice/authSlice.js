@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as api from "../api";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 function logouterror() {
   toast.error("Token Expired")

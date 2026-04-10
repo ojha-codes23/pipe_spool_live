@@ -10,7 +10,7 @@ import {
 import Logout from "./Logout";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchSpoolsDrawing } from "../redux/slice/spoolSlice";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 
 const imagebaseUrl = import.meta.env.VITE_IMAGE_URL;
