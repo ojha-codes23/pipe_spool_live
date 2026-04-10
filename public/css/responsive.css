@@ -1,0 +1,2005 @@
+@media only screen and (min-width:1280px) and (max-width:1365px) {
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .header-in {
+        gap: 10px;
+    }
+
+    .logo-data {
+        padding-left: 15px;
+
+        img {
+            width: 230px;
+        }
+    }
+
+    button.logout-cta {
+        padding: 0px 15px;
+    }
+
+    /* PROJECTS-PAGE */
+
+}
+
+@media only screen and (min-width:1024px) and (max-width:1279px) {
+    /* SPOOL-DRAWING-PAGE */
+
+    .bar-code-in {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+@media only screen and (min-width:1000px) and (max-width:1279px) {
+
+    /* LOGIN-PAGE */
+
+    .login-wrap .container .row .col-lg-4 {
+        width: 41.66666667%;
+    }
+
+    .login-page {
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .header-in {
+        gap: 10px;
+    }
+
+    .logo-data {
+        padding-left: 15px;
+
+        img {
+            width: 230px;
+        }
+    }
+
+    button.logout-cta {
+        padding: 0px 15px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+
+    .spools-head {
+        margin-bottom: 20px;
+        padding: 10px;
+        flex-wrap: wrap;
+        padding: 15px;
+
+        h1 {
+            font-size: 20px;
+            line-height: normal;
+
+            i {
+                font-size: 30px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .spool-strip-details p b {
+        font-size: 18px;
+    }
+
+    .drow-cta-grp {
+        margin-top: 0;
+        flex-wrap: wrap;
+        width: auto;
+        gap: 10px;
+    }
+
+    .drow-status-cta-wrp {
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .drow-cta-grp button.btn-1,
+    .drow-cta-grp button.btn-2 {
+        width: auto;
+    }
+
+    .drow-cta-grp button div {
+        gap: 5px;
+    }
+
+    .drow-cta-grp a.next-stage-cta {
+        width: auto;
+        gap: 5px;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+
+}
+@media only screen and (min-width:800px) and (max-width:1334px) {
+   /* .status-tag.paused {
+    display: none;
+}  */
+.bar-code-wrp {
+    display: none;
+}
+.drow-status-cta-wrp {
+    display: block;
+    flex-wrap: wrap;
+}
+.spool-strip-stat-report p {
+    display: none;
+}
+    .drow-status-cta-wrp {
+        display: flex;
+    }
+        .drow-cta-grp {
+        margin-top: 0;
+        flex-wrap: wrap;
+        width: auto;
+        gap: 10px;
+    }
+      .drow-cta-grp {
+        display: flex;
+        flex-wrap: nowrap;
+        width: 430px;
+        margin-left: auto;
+    }
+   /* .status-tag.my-ready-btn{
+    display: none;
+   } */
+    /* .status-tag.inprogress {
+    display: none;
+    }
+    .status-tag.start {
+    display: none;
+}
+  .status-tag.resume {
+    display: none;
+}
+  .status-tag.pause {
+    display: none;
+} */
+
+}
+
+@media only screen and (min-width:912px) and (max-width:999px) {
+
+    /* .status-tag.paused {
+    display: none;
+} */
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: 100dvh;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        display: none;
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        margin-right: 5px;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification .dropdown-menu {
+        width: 380px;
+    }
+
+    .notification button.dropdown-toggle {
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        padding: 0px 10px;
+        justify-content: center;
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+        padding: 10px;
+        flex-wrap: wrap;
+        padding: 15px;
+
+        h1 {
+            font-size: 20px;
+            line-height: normal;
+
+            i {
+                font-size: 30px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .spool-strip-details p b {
+        font-size: 18px;
+    }
+
+    .drow-cta-grp {
+        margin-top: 0;
+        flex-wrap: wrap;
+        width: auto;
+        gap: 10px;
+    }
+
+    .drow-status-cta-wrp {
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .drow-cta-grp button.btn-1,
+    .drow-cta-grp button.btn-2 {
+        width: auto;
+    }
+
+    .drow-cta-grp button div {
+        gap: 5px;
+    }
+
+    .drow-cta-grp a.next-stage-cta {
+        width: auto;
+        gap: 5px;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+@media only screen and (min-width:800px) and (max-width:911px) {
+
+    /* .status-tag.paused {
+    display: none;
+} */
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: 100dvh;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        display: none;
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        margin-right: 5px;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification .dropdown-menu {
+        width: 380px;
+    }
+
+    .notification button.dropdown-toggle {
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        padding: 0px 10px;
+        justify-content: center;
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+        padding: 10px;
+        flex-wrap: wrap;
+        padding: 15px;
+
+        h1 {
+            font-size: 20px;
+            line-height: normal;
+
+            i {
+                font-size: 30px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .spool-strip-details p b {
+        font-size: 18px;
+    }
+
+    .drow-cta-grp {
+        margin-top: 0;
+        flex-wrap: wrap;
+        width: auto;
+        gap: 10px;
+    }
+
+    .drow-status-cta-wrp {
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .drow-cta-grp button.btn-1,
+    .drow-cta-grp button.btn-2 {
+        width: auto;
+    }
+
+    .drow-cta-grp button div {
+        gap: 5px;
+    }
+
+    .drow-cta-grp a.next-stage-cta {
+        width: auto;
+        gap: 5px;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+@media only screen and (min-width:768px) and (max-width:799px) {
+
+    .status-tag.paused {
+    display: none;
+}
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: 100dvh;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        display: none;
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        margin-right: 5px;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification .dropdown-menu {
+        width: 380px;
+    }
+
+    .notification button.dropdown-toggle {
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        padding: 0px 10px;
+        justify-content: center;
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+        padding: 10px;
+        flex-wrap: wrap;
+        padding: 15px;
+
+        h1 {
+            font-size: 20px;
+            line-height: normal;
+
+            i {
+                font-size: 30px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .spool-strip-details p b {
+        font-size: 18px;
+    }
+
+    .drow-cta-grp {
+        margin-top: 0;
+        flex-wrap: wrap;
+        width: auto;
+        gap: 10px;
+    }
+
+    .drow-status-cta-wrp {
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .drow-cta-grp button.btn-1,
+    .drow-cta-grp button.btn-2 {
+        width: auto;
+    }
+
+    .drow-cta-grp button div {
+        gap: 5px;
+    }
+
+    .drow-cta-grp a.next-stage-cta {
+        width: auto;
+        gap: 5px;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+
+
+
+}
+
+@media only screen and (min-width:480px) and (max-width:767px) {
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: auto;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        align-items: flex-start;
+        width: 100%;
+        padding-left: 15px;
+
+        img {
+            width: 230px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        margin-right: auto;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification .dropdown-menu {
+        width: 380px;
+    }
+
+    .notification button.dropdown-toggle {
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        width: 48px;
+        padding: 0;
+        justify-content: center;
+
+        span {
+            display: none;
+        }
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    main.spools-page .container:first-child .row {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .page-search {
+        text-align: start;
+    }
+
+    .spools-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+
+        h1 {
+            font-size: 18px;
+            line-height: normal;
+
+            i {
+                font-size: 28px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+    }
+
+    .spools-filter form select {
+        width: 48.2%;
+    }
+
+    .spools-filter form .form-check.form-switch {
+        width: 100%;
+    }
+
+    main.spools-page .pagination-wrp {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .spools-filter form label {
+        width: 100%;
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .drow-cta-grp button.btn-1,
+    .drow-cta-grp button.btn-2 {
+        width: fit-content;
+    }
+
+    main.spools-page .spool-strip-wrp .container .row {
+        flex-direction: column;
+    }
+
+    .spool-strip-details {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .spool-strip-stat-report {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .spool-strip-stat-report button.status-tag {
+        width: 100%;
+    }
+
+    #reported-issue-popup .modal-dialog .other-popup-cta-grp {
+        flex-wrap: wrap;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+@media only screen and (min-width:390px) and (max-width:479px) {
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: auto;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-in .logo {
+        width: 120px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        padding-left: 0;
+        padding-top: 15px;
+        border-left: 0;
+        border-top: 1px solid var(--white);
+        align-items: center;
+        margin-bottom: 20px;
+        align-items: flex-start;
+        width: 100%;
+
+        img {
+            width: 200px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        width: 100%;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+
+    .notification .dropdown-menu {
+        width: 290px;
+    }
+
+    .notification button.dropdown-toggle {
+        height: 40px;
+        width: 40px;
+
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        justify-content: center;
+        position: absolute;
+        top: 15px;
+        right: 65px;
+
+        span {
+            display: none;
+        }
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    main.spools-page .container:first-child .row {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .page-search {
+        text-align: start;
+    }
+
+    .spools-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+
+        h1 {
+            font-size: 18px;
+            line-height: normal;
+
+            i {
+                font-size: 28px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    .spools-filter form select {
+        width: 100%;
+    }
+
+    .spools-filter form .form-check.form-switch {
+        width: 100%;
+    }
+
+    main.spools-page .pagination-wrp {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    main.spools-page .spool-strip-wrp .container .row {
+        flex-direction: column;
+    }
+
+    .spool-strip-details {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .spool-strip-stat-report {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .spool-strip-stat-report button.status-tag {
+        width: 100%;
+    }
+
+    #reported-issue-popup .modal-dialog .other-popup-cta-grp {
+        flex-wrap: wrap;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+
+}
+
+@media only screen and (min-width:360px) and (max-width:389px) {
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: auto;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-in .logo {
+        width: 120px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        padding-left: 0;
+        padding-top: 15px;
+        border-left: 0;
+        border-top: 1px solid var(--white);
+        align-items: center;
+        margin-bottom: 20px;
+        align-items: flex-start;
+        width: 100%;
+
+        img {
+            width: 200px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        width: 100%;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+
+    .notification .dropdown-menu {
+        width: 290px;
+    }
+
+    .notification button.dropdown-toggle {
+        height: 40px;
+        width: 40px;
+
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        justify-content: center;
+        position: absolute;
+        top: 15px;
+        right: 65px;
+
+        span {
+            display: none;
+        }
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    main.spools-page .container:first-child .row {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .page-search {
+        text-align: start;
+    }
+
+    .spools-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+
+        h1 {
+            font-size: 18px;
+            line-height: normal;
+
+            i {
+                font-size: 28px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    .spools-filter form select {
+        width: 100%;
+    }
+
+    .spools-filter form .form-check.form-switch {
+        width: 100%;
+    }
+
+    main.spools-page .pagination-wrp {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    main.spools-page .spool-strip-wrp .container .row {
+        flex-direction: column;
+    }
+
+    .spool-strip-details {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .spool-strip-stat-report {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .spool-strip-stat-report button.status-tag {
+        width: 100%;
+    }
+
+    #reported-issue-popup .modal-dialog .other-popup-cta-grp {
+        flex-wrap: wrap;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+@media only screen and (min-width:320px) and (max-width:359px) {
+
+    /* LOGIN-PAGE */
+
+    .login-page {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .login-inner {
+        padding: 25px 15px;
+    }
+
+    .login-inner .data h1 {
+        font-size: 26px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .input-field .dropdown button.dropdown-toggle {
+        font-size: 14px;
+    }
+
+    .input-field input[type="text"],
+    .input-field input[type="password"] {
+        font-size: 14px;
+    }
+
+    .primary-cta {
+        font-weight: 400;
+        height: 48px;
+    }
+
+    /* LOGIN-PAGE */
+
+
+
+    /* PROJECTS-PAGE */
+
+    .page-wrapper {
+        height: auto;
+    }
+
+    header {
+        position: relative;
+    }
+
+    .header-in {
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-in .logo {
+        width: 100px;
+    }
+
+    main.projects-page {
+        padding-top: 30px;
+        padding-bottom: 65px;
+    }
+
+    .logo-data {
+        padding-left: 0;
+        padding-top: 15px;
+        border-left: 0;
+        border-top: 1px solid var(--white);
+        align-items: center;
+        margin-bottom: 20px;
+        align-items: flex-start;
+        width: 100%;
+
+        img {
+            width: 200px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+
+    .header-right {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-search {
+        input.srch-field {
+            width: 100%;
+        }
+    }
+
+    .entity-swtich {
+        width: 100%;
+    }
+
+    .entity-swtich button.dropdown-toggle {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .entity-swtich .dropdown-menu {
+        width: 100%;
+    }
+
+    .entity-swtich-btn {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .notification {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+
+    .notification .dropdown-menu {
+        width: 290px;
+    }
+
+    .notification button.dropdown-toggle {
+        height: 40px;
+        width: 40px;
+
+        i {
+            font-size: 24px;
+        }
+
+        span.count {
+            right: -8px;
+            top: -8px;
+        }
+    }
+
+    .noti-in {
+        padding: 12px 0px 12px 15px;
+
+        h3 {
+            font-size: 15px;
+
+            b {
+                font-size: 13px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    button.logout-cta {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        justify-content: center;
+        position: absolute;
+        top: 15px;
+        right: 65px;
+
+        span {
+            display: none;
+        }
+    }
+
+    .page-heading {
+        margin-bottom: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .grid-wrap {
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    /* PROJECTS-PAGE */
+
+    /* SPOOLS-PAGE */
+
+    main.spools-page {
+        padding-top: 30px;
+    }
+
+    main.spools-page .container:first-child .row {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .page-search {
+        text-align: start;
+    }
+
+    .spools-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+
+    .spools-head {
+        margin-bottom: 20px;
+
+        h1 {
+            font-size: 18px;
+            line-height: normal;
+
+            i {
+                font-size: 28px;
+            }
+        }
+    }
+
+    .spools-filter {
+        margin-top: 20px;
+        width: 100%;
+
+        form {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    .spools-filter form select {
+        width: 100%;
+    }
+
+    .spools-filter form .form-check.form-switch {
+        width: 100%;
+    }
+
+    main.spools-page .pagination-wrp {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* SPOOLS-PAGE */
+
+    /* SPOOL-DRAWING-PAGE */
+
+    main.spools-page .spool-strip-wrp .container .row {
+        flex-direction: column;
+    }
+
+    .spool-strip-details {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .spool-strip-stat-report {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .spool-strip-stat-report button.status-tag {
+        width: 100%;
+    }
+
+    #reported-issue-popup .modal-dialog .other-popup-cta-grp {
+        flex-wrap: wrap;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+}
+
+
+@media (min-height: 1368px) and (max-height: 1368px) {
+    .page-wrapper {
+        height: 100dvh;
+    }
+}
+
+@media (min-height: 1280px) and (max-height: 1280px) {
+    .page-wrapper {
+        height: 100dvh;
+    }
+}
+
+
+@media (min-height: 1180px) and (max-height: 1180px) {
+    .page-wrapper {
+        height: 100dvh;
+    }
+}
+
+@media (min-height: 1024px) and (max-height: 1024px) {
+    .page-wrapper {
+        height: 100dvh;
+    }
+}
+
+
+
+@media (max-width: 1000px) {
+
+    /* SPOOL-DRAWING-PAGE */
+
+    .spool-strip-stat-report p,
+    .spool-strip-stat-report .status-tag.start,
+    .bar-code-wrp {
+        display: none;
+    }
+
+    .drow-status-cta-wrp {
+        display: flex;
+    }
+
+    /* SPOOL-DRAWING-PAGE */
+
+}

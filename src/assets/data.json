@@ -1,0 +1,288 @@
+{
+  "projectData": {
+    "entity": "fabrication tech",
+    "projects": [
+      {
+        "id": 1,
+        "name": "Pipeline Refinery A",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 2,
+        "name": "Pipeline Refinery B",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 3,
+        "name": "Pipeline Refinery C",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 4,
+        "name": "Pipeline Refinery D",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 5,
+        "name": "Pipeline Refinery E",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 6,
+        "name": "Pipeline Refinery F",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 7,
+        "name": "Pipeline Refinery G",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 8,
+        "name": "Pipeline Refinery H",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 9,
+        "name": "Pipeline Refinery I",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 10,
+        "name": "Pipeline Refinery J",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 11,
+        "name": "Pipeline Refinery K",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 12,
+        "name": "Pipeline Refinery L",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 13,
+        "name": "Pipeline Refinery M",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 14,
+        "name": "Pipeline Refinery N",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      },
+      {
+        "id": 15,
+        "name": "Pipeline Refinery O",
+        "totalSpools": 3,
+        "icon": "hgi-folder-02",
+        "link": "spools.html"
+      }
+    ]
+  },
+
+  "spoolData": [
+    {
+      "spoolNo": "SP-2024-001",
+      "stage": "Welding",
+      "status": {
+        "type": "start",
+        "label": "Ready to Start",
+        "icon": "hgi-play"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Open"
+    },
+    {
+      "spoolNo": "SP-2024-002",
+      "stage": "Inspection",
+      "status": {
+        "type": "paused",
+        "label": "Paused",
+        "icon": "hgi-pause"
+      },
+      "flag": {
+        "type": "flagged",
+        "label": "Flagged",
+        "icon": "hgi-flag-02"
+      },
+      "issue": {
+        "hasIssue": true,
+        "viewable": true
+      },
+      "action": "Open"
+    },
+    {
+      "spoolNo": "SP-2024-003",
+      "stage": "Fit-up",
+      "status": {
+        "type": "inprogress",
+        "label": "In Progress",
+        "icon": "hgi-refresh"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Open"
+    },
+    {
+      "spoolNo": "SP-2024-004",
+      "stage": "Inspection",
+      "status": {
+        "type": "paused",
+        "label": "Paused",
+        "icon": "hgi-pause"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Open"
+    },
+    {
+      "spoolNo": "SP-2024-005",
+      "stage": "Coating",
+      "status": {
+        "type": "completed",
+        "label": "Completed",
+        "icon": "hgi-checkmark-circle-01"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Next Stage"
+    },
+    {
+      "spoolNo": "SP-2024-006",
+      "stage": "Cutting",
+      "status": {
+        "type": "start",
+        "label": "Ready to Start",
+        "icon": "hgi-play"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Open"
+    },
+    {
+      "spoolNo": "SP-2024-007",
+      "stage": "Cutting",
+      "status": {
+        "type": "completed",
+        "label": "Completed",
+        "icon": "hgi-checkmark-circle-01"
+      },
+      "flag": null,
+      "issue": null,
+      "action": "Next Stage"
+    }
+  ]
+  ,
+  "notifications": [
+    {
+      "id": 1,
+      "spoolNo": "SP-2024-002",
+      "timeAgo": "30m ago",
+      "project": "Pipeline Refinery A",
+      "message": "Issue reviewed. Please recheck the weld joint at section B-4.",
+      "isUnread": true
+    },
+    {
+      "id": 2,
+      "spoolNo": "SP-2024-004",
+      "timeAgo": "1h ago",
+      "project": "Pipeline Refinery B",
+      "message": "Material shortage identified. Welding postponed until supply arrives.",
+      "isUnread": true
+    },
+    {
+      "id": 3,
+      "spoolNo": "SP-2024-006",
+      "timeAgo": "3h ago",
+      "project": "Gas Line Expansion",
+      "message": "QC check completed. Spool approved for next stage.",
+      "isUnread": false
+    },
+    {
+      "id": 4,
+      "spoolNo": "SP-2024-009",
+      "timeAgo": "Yesterday",
+      "project": "Pipeline Refinery A",
+      "message": "Inspection paused due to safety clearance requirements.",
+      "isUnread": false
+    },
+    {
+      "id": 5,
+      "spoolNo": "SP-2024-012",
+      "timeAgo": "2 days ago",
+      "project": "Offshore Line Project",
+      "message": "Admin requested additional documentation before final approval.",
+      "isUnread": false
+    }
+  ],
+ "stages"
+ : [
+  {
+   "step": 1,
+   "name": "Spool Drawing Created",
+   "state": "Done",
+    "status": { "type": "completed"," label": "Completed", "icon": "hgi-checkmark-circle-01" }
+  },
+  {
+   "step": 1,
+   "name": "Spool Drawing Created",
+   "state": "Done",
+    "status": { "type": "completed"," label": "Completed", "icon": "hgi-checkmark-circle-01" }
+  },
+   {
+   "step": 1,
+   "name": "Spool Drawing Created",
+   "state": "Done",
+    "status": { "type": "completed"," label": "Completed", "icon": "hgi-checkmark-circle-01" }
+  },
+ {
+   "step": 1,
+   "name": "Spool Drawing Created",
+   "state": "Done",
+    "status": { "type": "completed"," label": "Completed", "icon": "hgi-checkmark-circle-01" }
+  },
+ {
+   "step": 1,
+   "name": "Spool Drawing Created",
+   "state": "Done",
+    "status": { "type": "completed"," label": "Completed", "icon": "hgi-checkmark-circle-01" }
+  }
+]
+
+  
+
+
+}
+
+
