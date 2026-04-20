@@ -62,7 +62,7 @@ const Header = () => {
   };
 
   const markAllAsRead = () => {
-    setNotification((prev) => prev.map((n) => ({ ...n, isUnread: false })));
+    setNotification((prev) => prev?.map((n) => ({ ...n, isUnread: false })));
   };
 
   useEffect(() => {

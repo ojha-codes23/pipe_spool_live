@@ -61,6 +61,7 @@ export const selectEntity = (formData) => API.post("/change_entity", formData)
 export const spoolsApi = (formData) => API.post('project_details', formData)
 export const fetchSpoolsApi = (formData) => API.post('/spool_details', formData)
 export const fetchSpoolsDrawingApi = (formData) => API.post('/spool_drawing', formData)
+export const getStageDetails = (formData) => API.post('/get_stage_details', formData)
 
 
 // Task  START END PAUSE RESUME

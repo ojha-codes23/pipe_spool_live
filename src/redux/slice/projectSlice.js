@@ -16,10 +16,25 @@ export const spoolByProject = createAsyncThunk(
     }
 );
 
+
+export const getstageDetails = createAsyncThunk(
+    "user/getstageDetails",
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await api.getStageDetails(formData);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+
 const projectSlice = createSlice({
     name: "projet",
     initialState: {
         projectsData: [],
+        getstageDetailsData:null,
         loading: false,
         error: null
     },
@@ -41,7 +56,55 @@ const projectSlice = createSlice({
                 state.projectsData = [];
                 toast.error(action?.payload?.message)
             })
-    }
+
+
+    //          .addCase(getstageDetails.pending, (state) => {
+    //             state.loading = true;
+    //             state.error = null;
+    //         })
+    //         .addCase(getstageDetails.fulfilled, (state, action) => {
+    //             const getstageAllDetailsData= action?.payload?.data || [];
+    //             state.getstageDetailsData= getstageAllDetailsData;
+    //             state.loading = false;
+    //         })
+    //         .addCase(getstageDetails.rejected, (state, action) => {
+    //             state.loading = false;
+    //             state.error = action.payload || action.error.message;
+    //             state.getstageDetailsData = null;
+    //             toast.error(action?.payload?.message)
+    //         })
+    // }
+
+
+     .addCase(getstageDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      // ✅ SUCCESS (FIXED HERE)
+      .addCase(getstageDetails.fulfilled, (state, action) => {
+        const data = action?.payload?.data || {};
+
+        // 🔥 get spool_id from dispatched args
+        const spoolId = action.meta.arg.spool_id;
+
+        // ✅ store per spool (IMPORTANT FIX)
+        state.getstageDetailsData = {
+          ...state.getstageDetailsData,
+          [spoolId]: data,
+        };
+
+        state.loading = false;
+      })
+
+      // ❌ ERROR
+      .addCase(getstageDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+
+        toast.error(action?.payload?.message || "Failed to fetch stage details");
+      });
+  },
 })
 
 export default projectSlice.reducer;
