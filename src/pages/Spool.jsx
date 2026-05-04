@@ -619,6 +619,11 @@ const handlenext = (item) => {
       ? stageData?.status || item?.status
       : item?.status;
 
+    if(item?.message){
+        toast.error(item?.message || "Failed to fetch stage details");
+        return;
+    }
+
   if (status === "all_completed") {
     toast.error("This spool is already completed. Please choose another spool.");
     return;
