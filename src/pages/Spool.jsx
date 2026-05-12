@@ -436,50 +436,6 @@ const handleStageChange = async (stageId, spoolId) => {
     setSelectSpool(id)
   }
 
-  // const handlenext = (item) => {
-
-  //   if (item?.status === "all_completed") {
-  //     toast.error("This spool is already completed. Please choose another spool.");
-  //     return;
-  //   }
-
-  //   navigate("/drawing-spool", {
-  //     state: {
-  //       spool_id:  item?.spool_id,
-  //       stage_id: item?.stage_id,
-  //     },
-  //   });
-  // };
-
-//   const handlenext = (item) => {
-//   const spoolId = item?.spool_id;
-
-//   // ✅ get correct stage id
-//   const stageId =
-//     item?.type === "parallel"
-//       ? selectedStage[spoolId] || item?.stage_id
-//       : item?.stage_id;
-
-//   // ✅ get correct status (important if using API data)
-//   const stageData = getstageDetailsData[spoolId] || {};
-//   const status =
-//     item?.type === "parallel"
-//       ? stageData?.status || item?.status
-//       : item?.status;
-
-//   if (status === "all_completed") {
-//     toast.error("This spool is already completed. Please choose another spool.");
-//     return;
-//   }
-
-//   navigate("/drawing-spool", {
-//     state: {
-//       spool_id: item?.spool_id || spoolId,
-//       stage_id: item?.stage_id || stageId,
-//     },
-//   });
-// };
-
 
 
   const totalItems = filteredSpools?.length;
@@ -568,35 +524,6 @@ useEffect(() => {
 
 
 
-//   const handlenext = (item) => {
-//   const spoolId = item?.spool_id;
-
-//   // ✅ get correct stage id
-//   const stageId =
-//     item?.type === "parallel"
-//       ? selectedStage[spoolId] || item?.stage_id
-//       : item?.stage_id;
-
-//   // ✅ get correct status (important if using API data)
-//   const stageData = getstageDetailsData[spoolId] || {};
-//   const status =
-//     item?.type === "parallel"
-//       ? stageData?.status || item?.status
-//       : item?.status;
-
-//   if (status === "all_completed") {
-//     toast.error("This spool is already completed. Please choose another spool.");
-//     return;
-//   }
-
-//   navigate("/drawing-spool", {
-//     state: {
-//       spool_id: item?.spool_id || spoolId,
-//       stage_id: item?.stage_id || stageId,
-//     },
-//   });
-// };
-
 
 const handlenext = (item) => {
   if (!item) return;
@@ -615,31 +542,37 @@ const handlenext = (item) => {
   // ✅ get correct status
   const stageData = safeStageDetails[spoolId] || {};
 
-  console.log(stageData)
+
+
   const status =
     item?.type === "parallel"
       ? stageData?.status || item?.status
       : item?.status;
 
-      if(item?.message){
+
+      if(item?.message ){
         toast.error(item?.message || "Failed to fetch stage details");
         return;
       }
 
-  if (status === "all_completed") {
-    toast.error("This spool is already completed. Please choose another spool.");
-    return;
-  }
+      
+      if(stageData?.status ==="blocked"){
+        toast.error(  stageData?.message || "Please complete QC first!")
+        return;
+      } 
 
-  navigate("/drawing-spool", {
-    state: {
-      spool_id: spoolId,
-      stage_id: stageId,
-    },
-  });
+        if (status === "all_completed") {
+          toast.error("This spool is already completed. Please choose another spool.");
+          return;
+        }
+
+        navigate("/drawing-spool", {
+          state: {
+            spool_id: spoolId,
+            stage_id: stageId,
+          },
+        });
 };
-
-
 
 
   console.log("search", search)
