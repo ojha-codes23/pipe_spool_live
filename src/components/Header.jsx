@@ -364,6 +364,26 @@ const Header = () => {
                     <i className="hgi hgi-stroke hgi-logout-circle-02"></i>
                   </button>
                 )}
+
+                 {!hideLogout && (
+               <button
+                  onClick={() =>
+                    window.open("https://admin.rprspooltracker.com/", "_blank")
+                  }
+                  className="logout-cta"
+                  style={{ background }}
+                  type="button"
+                >
+                  Visit Admin{" "}
+                  <i
+                    className="hgi hgi-stroke hgi-square-arrow-up-right"
+                    style={{ marginLeft: "5px" }}
+                  ></i>
+                </button>
+                )}
+
+              
+
               </div>
             </div>
           </div>
