@@ -44,7 +44,7 @@ API.interceptors.response.use((response) => response, (error) => {
 
   if (message === "Unauthenticated." || error?.response?.status === 401) {
     toast.error("Token Expired");
-    Cookies.remove("pipeSpool");  
+    Cookies.remove("pipeSpool");
     setTimeout(() => {
       window.location.href = "/";
     }, 500);
@@ -62,6 +62,7 @@ export const spoolsApi = (formData) => API.post('project_details', formData)
 export const fetchSpoolsApi = (formData) => API.post('/spool_details', formData)
 export const fetchSpoolsDrawingApi = (formData) => API.post('/spool_drawing', formData)
 export const getStageDetails = (formData) => API.post('/get_stage_details', formData)
+export const getSubStageDetails = (formData) => API.post('/sub-stages-details', formData)
 
 
 // Task  START END PAUSE RESUME

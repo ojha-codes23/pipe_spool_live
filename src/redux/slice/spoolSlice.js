@@ -28,11 +28,25 @@ export const fetchSpoolsDrawing = createAsyncThunk(
     }
 );
 
+
+export const getSubStageDetails = createAsyncThunk(
+    "user/getSubstageDetails",
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await api.getSubStageDetails(formData)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error?.response?.data || error.message);
+        }
+    }
+)
+
 const spoolSlice = createSlice({
     name: "spool",
     initialState: {
         spoolData: [],
         spoolDrawingDetails: null,
+        getSubStageDetailsData: null,
         loading: false,
         error: null
     },
@@ -71,9 +85,26 @@ const spoolSlice = createSlice({
             .addCase(fetchSpoolsDrawing.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-                
+
                 state.spoolDrawingDetails = [];
                 toast.error(action?.payload?.message)
+            })
+
+        builder
+            .addCase(getSubStageDetails.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getSubStageDetails.fulfilled, (state, action) => {
+                const getSubStageDetailsData = action?.payload?.data || [];
+                state.getSubStageDetailsData = getSubStageDetailsData;
+                state.loading = false;
+            })
+            .addCase(getSubStageDetails.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+                state.getSubStageDetailsData = [];
+                // toast.error(action?.payload?.message)
             })
     }
 })

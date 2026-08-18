@@ -6,7 +6,8 @@ import ViewStageModal from "../components/ViewStageModal";
 import Pagination from "../commanComponents/Pagination";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getstageDetails, spoolByProject } from "../redux/slice/projectSlice";
+import { getstageDetails, spoolByProject, } from "../redux/slice/projectSlice";
+import { getSubStageDetails } from "../redux/slice/spoolSlice";
 import { toast } from "react-hot-toast";
 
 const status = [
@@ -14,7 +15,7 @@ const status = [
   "paused",
   "in_progress",
   "all_completed",
-  
+
 ]
 
 const Spool = () => {
@@ -22,13 +23,12 @@ const Spool = () => {
   const { state } = useLocation();
   const dispatch = useDispatch()
   const closedDispatchedRef = useRef(false);
-  const selectedStageRef = useRef({});
   const timerRef = useRef(null)
   const itemsPerPage = 10;
 
   const selected = useSelector((state) => state.entity.selected);
-  const { projectsData , getstageDetailsData} = useSelector((state) => state.project);
-  const hasHandledParallel = useRef(false);
+  const { projectsData, getstageDetailsData, } = useSelector((state) => state.project);
+
 
   console.log("getstageDetailsData", getstageDetailsData)
   const projectsDataRef = useRef(projectsData);
@@ -50,72 +50,100 @@ const Spool = () => {
   // const [handleChnageStage, setHandleChangeStage] = useState(null);
 
   const [selectedStage, setSelectedStage] = useState({});
+  const selectedStageRef = useRef({});
 
   const [selectedStageStatus, setSelectedStagesStatus] = useState({});
-  const  [newStageDetails, setNewStageDetails] = useState({})
+  const [newStageDetails, setNewStageDetails] = useState({})
   const [parallelStageStatus, setParallelStageStatus] = useState({})
+  const [selectedSubStage, setSelectedSubStage] = useState({});
 
   console.log("newStageDetails", newStageDetails)
 
+  useEffect(() => {
+    selectedStageRef.current = selectedStage;
+  }, [selectedStage]);
+
+  // const handleStageChange =async(stageId, spoolId) => {
+  //   console.log("Stage ID:", stageId);
+  //   console.log("Spool ID:", spoolId);
+
+  //   try {
+  //       const response = await dispatch(getstageDetails({ 
+  //             project_id:projectsData?.project_id,
+  //             spool_id:spoolId,
+  //             stage_id:stageId})).unwrap();
+
+  //             if(response?.data){
+  //                setNewStageDetails(response.data);
+  //             }
+  //   } catch (error) {
+  //      toast.error(error?.message || "Failed to change stage");
+  //   }
+  // };
 
 
-useEffect(() => {
-  selectedStageRef.current = selectedStage;
-}, [selectedStage]);
+  const handleStageChange = async (stageId, spoolId) => {
+    console.log("Stage ID:", stageId);
+    console.log("Spool ID:", spoolId);
 
-// const handleStageChange =async(stageId, spoolId) => {
-//   console.log("Stage ID:", stageId);
-//   console.log("Spool ID:", spoolId);
+    // Reset sub-stage selection when main stage changes
+    setSelectedSubStage((prev) => {
+      const newState = { ...prev };
+      delete newState[spoolId];
+      return newState;
+    });
 
-//   try {
-//       const response = await dispatch(getstageDetails({ 
-//             project_id:projectsData?.project_id,
-//             spool_id:spoolId,
-//             stage_id:stageId})).unwrap();
-      
-//             if(response?.data){
-//                setNewStageDetails(response.data);
-//             }
-//   } catch (error) {
-//      toast.error(error?.message || "Failed to change stage");
-//   }
-// };
+    try {
+      const response = await dispatch(
+        getstageDetails({
+          project_id: projectsData?.project_id,
+          spool_id: spoolId,
+          stage_id: stageId,
+        })
+      ).unwrap();
 
-
-const handleStageChange = async (stageId, spoolId) => {
-  console.log("Stage ID:", stageId);
-  console.log("Spool ID:", spoolId);
-
-  try {
-    const response = await dispatch(
-      getstageDetails({
-        project_id: projectsData?.project_id,
-        spool_id: spoolId,
-        stage_id: stageId,
-      })
-    ).unwrap();
-
-    if (response?.data) {
-      setNewStageDetails((prev) => ({
-        ...prev,
-        [spoolId]: response.data,
-      }));
+      if (response?.data) {
+        setNewStageDetails((prev) => ({
+          ...prev,
+          [spoolId]: response.data,
+        }));
+      }
+    } catch (error) {
+      toast.error(error?.message || "Failed to change stage");
     }
-  } catch (error) {
-    toast.error(error?.message || "Failed to change stage");
+  };
+
+
+
+  const handleSubStageChange = async (stageId, spoolId) => {
+    try {
+      const response = await dispatch(getSubStageDetails({
+        project_id: projectsData?.project_id,
+        sub_stage_id: stageId,
+        spool_id: spoolId,
+      })).unwrap();
+      if (response?.data) {
+        setSelectedSubStage((prev) => {
+          return {
+            ...prev,
+            [spoolId]: response.data
+          }
+        })
+      }
+    } catch (error) {
+      toast.error(error?.message || "Failed to change sub stage");
+    }
   }
-};
 
 
+  // useEffect(() => {
 
-// useEffect(() => {
+  //   handleStageChange()
 
-//   handleStageChange()
-
-// }, [selectedStage])
+  // }, [selectedStage])
 
 
-// console.log(handleChnageStage,"haneleChnageStage")
+  // console.log(handleChnageStage,"haneleChnageStage")
 
   const prevFiltersRef = useRef({ search, selectStage, selectStatus, isflagged });
   const flag_status = filteredSpools?.[0]?.flag_status;
@@ -133,15 +161,15 @@ const handleStageChange = async (stageId, spoolId) => {
   // const stages = [...new Set(spools?.map(spool => spool?.stage_name))];
 
   const stages = [
-  ...new Set(
-    spools?.flatMap((spool) => {
-      if (spool?.type === "parallel") {
-        return spool?.parallel_stages?.map((s) => s?.stage_name) || [];
-      }
-      return spool?.stage_name ? [spool.stage_name] : [];
-    })
-  ),
-];
+    ...new Set(
+      spools?.flatMap((spool) => {
+        if (spool?.type === "parallel") {
+          return spool?.parallel_stages?.map((s) => s?.stage_name) || [];
+        }
+        return spool?.stage_name ? [spool.stage_name] : [];
+      })
+    ),
+  ];
 
   useEffect(() => {
     if (state?.id) {
@@ -229,20 +257,20 @@ const handleStageChange = async (stageId, spoolId) => {
     //   );
     // }
 
-   if (selectStage) {
-  const term = selectStage.toLowerCase();
+    if (selectStage) {
+      const term = selectStage.toLowerCase();
 
-  filtered = filtered.filter((item) => {
-    if (item?.type === "parallel") {
-      return item?.parallel_stages?.some((stage) =>
-        stage?.stage_name?.toLowerCase().includes(term)
-      );
+      filtered = filtered.filter((item) => {
+        if (item?.type === "parallel") {
+          return item?.parallel_stages?.some((stage) =>
+            stage?.stage_name?.toLowerCase().includes(term)
+          );
+        }
+
+        return item?.stage_name?.toLowerCase().includes(term);
+      });
     }
 
-    return item?.stage_name?.toLowerCase().includes(term);
-  });
-}
-     
 
 
     // if (selectStatus) {
@@ -253,134 +281,134 @@ const handleStageChange = async (stageId, spoolId) => {
     // }
 
 
-// if (selectStatus) {
+    // if (selectStatus) {
 
-//   const term = (selectStatus === "all_completed" || selectStatus === "completed")
-//     ? "completed"
-//     : selectStatus.toLowerCase().replace(/\s+/g, "_");
+    //   const term = (selectStatus === "all_completed" || selectStatus === "completed")
+    //     ? "completed"
+    //     : selectStatus.toLowerCase().replace(/\s+/g, "_");
 
-//      filtered = filtered.filter((item) => {
-//     const stageDetails = getstageDetailsData?.[item?.spool_id]||item?.parallel_stages?.status;
+    //      filtered = filtered.filter((item) => {
+    //     const stageDetails = getstageDetailsData?.[item?.spool_id]||item?.parallel_stages?.status;
 
-//     console.log("stageDetails", stageDetails, item)
-    
-//     const stages = stageDetails?.stages?.status||item?.parallel_stages?.status||[] ;
+    //     console.log("stageDetails", stageDetails, item)
 
-//     console.log("stages", stages)
+    //     const stages = stageDetails?.stages?.status||item?.parallel_stages?.status||[] ;
 
-//     if (stages.length > 0) {
-//       return stages.every((stage) => {
-//         const stageStatus = (stage?.status || "").toLowerCase();
-//         if (term === "completed") {
-//           return stageStatus === "completed" || stageStatus === "all_completed";
-//         }
-//         return stageStatus === term;
-//       });
-//     }
+    //     console.log("stages", stages)
 
-//     const mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
-//     if (term === "completed") {
-//       return mainStatus === "completed" || mainStatus === "all_completed";
-//     }
-//     return mainStatus === term;
-//   });
-// }
+    //     if (stages.length > 0) {
+    //       return stages.every((stage) => {
+    //         const stageStatus = (stage?.status || "").toLowerCase();
+    //         if (term === "completed") {
+    //           return stageStatus === "completed" || stageStatus === "all_completed";
+    //         }
+    //         return stageStatus === term;
+    //       });
+    //     }
 
-
-                  // if (selectStatus) {
-                  //   const term =
-                  //     selectStatus === "all_completed" || selectStatus === "completed"
-                  //       ? "completed"
-                  //       : selectStatus.toLowerCase().replace(/\s+/g, "_");
-
-                  //       console.log(filtered, "before  status filter")
-
-                  //   filtered = filtered.filter((item) => {
+    //     const mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
+    //     if (term === "completed") {
+    //       return mainStatus === "completed" || mainStatus === "all_completed";
+    //     }
+    //     return mainStatus === term;
+    //   });
+    // }
 
 
-                  //     console.log("item?.parallel_stages", item?.parallel_stages)
-                  //     const stageDetails = item?.parallel_stages || item || {};
+    // if (selectStatus) {
+    //   const term =
+    //     selectStatus === "all_completed" || selectStatus === "completed"
+    //       ? "completed"
+    //       : selectStatus.toLowerCase().replace(/\s+/g, "_");
 
-       
-                  //       console.log("stageDetails", stageDetails, item)
+    //       console.log(filtered, "before  status filter")
 
-                  //     const stages =
-                  //       stageDetails?.stages_name ||
-                  //       item?.parallel_stages ||
-                  //       [];
-
-                  //     // ✅ check all stages (parallel case)
-                  //     if (Array.isArray(stages) && stages.length > 0) {
-                  //       return stages.every((stage) => {
-                  //         const stageStatus = (stage?.status || "").toLowerCase();
-
-                  //         if (term === "completed") {
-                  //           return (
-                  //             stageStatus === "completed" ||
-                  //             stageStatus === "all_completed" ||
-                  //             stageStatus === "complete"
-                  //           );
-                  //         }
-
-                  //         return stageStatus === term;
-                  //       });
-                  //     }
-
-                  //     // ✅ fallback (normal case)
-                  //     let mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
-
-                  //     if (term === "completed") {
-                  //       return (
-                  //         mainStatus === "completed" ||
-                  //         mainStatus === "all_completed" ||
-                  //         mainStatus === "complete"
-                  //       );
-                  //     }
-
-                  //     return mainStatus === term;
-                  //   });
-                  // }
+    //   filtered = filtered.filter((item) => {
 
 
+    //     console.log("item?.parallel_stages", item?.parallel_stages)
+    //     const stageDetails = item?.parallel_stages || item || {};
 
-                  if (selectStatus) {
-  const term =
-    selectStatus === "all_completed" || selectStatus === "completed"
-      ? "completed"
-      : selectStatus.toLowerCase().replace(/\s+/g, "_");
 
-  filtered = filtered.filter((item) => {
-    // ✅ PARALLEL CASE
-    if (item?.type === "parallel" && Array.isArray(item?.parallel_stages)) {
-      return item.parallel_stages.some((stage) => {
-        const stageStatus = (stage?.status || "").toLowerCase();
+    //       console.log("stageDetails", stageDetails, item)
+
+    //     const stages =
+    //       stageDetails?.stages_name ||
+    //       item?.parallel_stages ||
+    //       [];
+
+    //     // ✅ check all stages (parallel case)
+    //     if (Array.isArray(stages) && stages.length > 0) {
+    //       return stages.every((stage) => {
+    //         const stageStatus = (stage?.status || "").toLowerCase();
+
+    //         if (term === "completed") {
+    //           return (
+    //             stageStatus === "completed" ||
+    //             stageStatus === "all_completed" ||
+    //             stageStatus === "complete"
+    //           );
+    //         }
+
+    //         return stageStatus === term;
+    //       });
+    //     }
+
+    //     // ✅ fallback (normal case)
+    //     let mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
+
+    //     if (term === "completed") {
+    //       return (
+    //         mainStatus === "completed" ||
+    //         mainStatus === "all_completed" ||
+    //         mainStatus === "complete"
+    //       );
+    //     }
+
+    //     return mainStatus === term;
+    //   });
+    // }
+
+
+
+    if (selectStatus) {
+      const term =
+        selectStatus === "all_completed" || selectStatus === "completed"
+          ? "completed"
+          : selectStatus.toLowerCase().replace(/\s+/g, "_");
+
+      filtered = filtered.filter((item) => {
+        // ✅ PARALLEL CASE
+        if (item?.type === "parallel" && Array.isArray(item?.parallel_stages)) {
+          return item.parallel_stages.some((stage) => {
+            const stageStatus = (stage?.status || "").toLowerCase();
+
+            if (term === "completed") {
+              return (
+                stageStatus === "completed" ||
+                stageStatus === "all_completed" ||
+                stageStatus === "complete"
+              );
+            }
+
+            return stageStatus === term;
+          });
+        }
+
+        // ✅ NORMAL CASE
+        const status = (item?.status || "").toLowerCase();
 
         if (term === "completed") {
           return (
-            stageStatus === "completed" ||
-            stageStatus === "all_completed" ||
-            stageStatus === "complete"
+            status === "completed" ||
+            status === "all_completed" ||
+            status === "complete"
           );
         }
 
-        return stageStatus === term;
+        return status === term;
       });
     }
-
-    // ✅ NORMAL CASE
-    const status = (item?.status || "").toLowerCase();
-
-    if (term === "completed") {
-      return (
-        status === "completed" ||
-        status === "all_completed" ||
-        status === "complete"
-      );
-    }
-
-    return status === term;
-  });
-}
 
 
     // if (isflagged) {
@@ -392,17 +420,17 @@ const handleStageChange = async (stageId, spoolId) => {
     // }
 
     if (isflagged) {
-  filtered = filtered.filter((item) => {
-    const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
+      filtered = filtered.filter((item) => {
+        const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
 
-    const flagStatus =
-      item?.type === "parallel"
-        ? (stageData?.flag_status || item?.flag_status)
-        : item?.flag_status;
+        const flagStatus =
+          item?.type === "parallel"
+            ? (stageData?.flag_status || item?.flag_status)
+            : item?.flag_status;
 
-    return flagStatus === "open";
-  });
-}
+        return flagStatus === "open";
+      });
+    }
 
     setFilteredSpools(filtered);
     // setCurrentPage(1)
@@ -443,140 +471,247 @@ const handleStageChange = async (stageId, spoolId) => {
   const currentItems = filteredSpools.slice(startIndex, startIndex + itemsPerPage);
 
 
-// useEffect(() => {
-//   if (hasHandledParallel.current) return;
-//   if (!currentItems?.length) return;
+  // useEffect(() => {
+  //   if (hasHandledParallel.current) return;
+  //   if (!currentItems?.length) return;
 
-//   const initialSelected = {};
+  //   const initialSelected = {};
 
-//   currentItems.forEach((item) => {
-//     if (item?.type !== "parallel") return;
+  //   currentItems.forEach((item) => {
+  //     if (item?.type !== "parallel") return;
 
-//     const spoolId = item?.spool_id;
+  //     const spoolId = item?.spool_id;
 
-//     const stageId =
-//       item?.stage_id || item?.parallel_stages?.[0]?.stage_id;
+  //     const stageId =
+  //       item?.stage_id || item?.parallel_stages?.[0]?.stage_id;
 
-//     if (!stageId) return;
+  //     if (!stageId) return;
 
-//     // collect default selections
-//     initialSelected[spoolId] = stageId;
+  //     // collect default selections
+  //     initialSelected[spoolId] = stageId;
 
-//     // call API per spool
-//     handleStageChange(stageId, spoolId);
-//   });
+  //     // call API per spool
+  //     handleStageChange(stageId, spoolId);
+  //   });
 
-//   // ✅ set all at once (important)
-//   setSelectedStage((prev) => ({
-//     ...initialSelected,
-//     ...prev,
-//   }));
+  //   // ✅ set all at once (important)
+  //   setSelectedStage((prev) => ({
+  //     ...initialSelected,
+  //     ...prev,
+  //   }));
 
-//   // ✅ set once (outside loop)
-//   hasHandledParallel.current = true;
-//   setType("parallel");
+  //   // ✅ set once (outside loop)
+  //   hasHandledParallel.current = true;
+  //   setType("parallel");
 
-// }, [currentItems]);
+  // }, [currentItems]);
 
 
 
-useEffect(() => {
-  if (hasHandledParallel.current) return;
-  if (!currentItems?.length) return;
+  useEffect(() => {
+    if (!currentItems?.length) return;
 
-  const initialSelected = {};
+    const initialSelected = {};
 
-  currentItems.forEach((item) => {
-    if (item?.type !== "parallel") return;
+    currentItems.forEach((item) => {
+      if (item?.type !== "parallel") return;
+
+      const spoolId = item?.spool_id;
+
+      // If we already selected a stage for this spool, skip
+      if (selectedStageRef.current[spoolId]) return;
+
+      // ✅ pick first incomplete stage
+      const stageId =
+        item?.parallel_stages?.find(
+          (s) =>
+            !["completed", "all_completed", "complete"].includes(
+              s?.status?.toLowerCase()
+            )
+        )?.stage_id ||
+        item?.parallel_stages?.[0]?.stage_id;
+
+      if (!stageId) return;
+
+      initialSelected[spoolId] = stageId;
+
+      // ✅ call API
+      handleStageChange(stageId, spoolId);
+    });
+
+    if (Object.keys(initialSelected).length > 0) {
+      setSelectedStage((prev) => ({
+        ...prev,
+        ...initialSelected,
+      }));
+    }
+
+    setType("parallel");
+  }, [currentItems]);
+
+
+
+
+
+
+
+  // const handlenext = (item) => {
+  //   if (!item) return;
+
+  //   const spoolId = item?.spool_id;
+
+  //   const safeSelectedStage = selectedStage || {};
+  //   const safeStageDetails = getstageDetailsData || {};
+  //   const subStageData = selectedSubStage[spoolId] || {};
+  //   const subStageId = subStageData?.sub_stage_id || null;
+
+  //   // ✅ get correct stage id
+  //   const stageId =
+  //     item?.type === "parallel"
+  //       ? safeSelectedStage[spoolId] || item?.stage_id
+  //       : item?.stage_id;
+
+  //   // ✅ get correct status
+  //   const stageData = safeStageDetails[spoolId] || {};
+
+  //   const status =
+  //     item?.type === "parallel"
+  //       ? stageData?.status || item?.status
+  //       : item?.status;
+
+  //   if (item?.message) {
+  //     toast.error(item?.message || "Failed to fetch stage details");
+  //     return;
+  //   }
+
+  //   if (stageData?.status === "blocked") {
+  //     toast.error(stageData?.message || "Please complete QC first!")
+  //     return;
+  //   }
+
+  //   if (status === "all_completed") {
+  //     toast.error("This spool is already completed. Please choose another spool.");
+  //     return;
+  //   }
+
+
+
+  //   navigate("/drawing-spool", 
+  //     if(subStageId){
+  //       state: {
+  //         spool_id: spoolId,
+  //         sub_stage_id: subStageId,
+  //         spool_stage_id: subStageData?.spool_stage_id || stageData?.spool_stage_id || item?.spool_stage_id
+  //       }
+  //     }else{
+  //     state: {
+  //       spool_id: spoolId,
+  //       stage_id: stageId,
+  //     },
+
+  //       // ...(subStageId ? {
+  //       //   sub_stage_id: subStageId,
+  //       //   spool_stage_id: subStageData?.spool_stage_id || stageData?.spool_stage_id || item?.spool_stage_id
+  //       // } : {})
+  //     // },
+  //   });
+
+
+  // };
+
+
+  const handlenext = (item) => {
+    if (!item) return;
 
     const spoolId = item?.spool_id;
 
-    // ✅ pick first incomplete stage
+    const safeSelectedStage = selectedStage || {};
+    const safeStageDetails = getstageDetailsData || {};
+    const subStageData = selectedSubStage?.[spoolId] || {};
+    const subStageId = subStageData?.sub_stage_id || null;
+
+    // Get correct stage ID
     const stageId =
-      item?.parallel_stages?.find(
-        (s) =>
-          !["completed", "all_completed", "complete"].includes(
-            s?.status?.toLowerCase()
-          )
-      )?.stage_id ||
-      item?.parallel_stages?.[0]?.stage_id;
+      item?.type === "parallel"
+        ? safeSelectedStage?.[spoolId] || item?.stage_id
+        : item?.stage_id;
 
-    if (!stageId) return;
+    // Get correct stage data
+    const stageData = safeStageDetails?.[spoolId] || {};
 
-    initialSelected[spoolId] = stageId;
+    // Get correct status
+    const status =
+      item?.type === "parallel"
+        ? stageData?.status || item?.status
+        : item?.status;
 
-    // ✅ call API
-    handleStageChange(stageId, spoolId);
-  });
+    // Handle API/message error
+    if (item?.message) {
+      toast.error(item.message || "Failed to fetch stage details");
+      return;
+    }
 
-  setSelectedStage((prev) => ({
-    ...initialSelected,
-    ...prev,
-  }));
+    // Handle blocked stage
+    if (stageData?.status === "blocked") {
+      toast.error(stageData?.message || "Please complete QC first!");
+      return;
+    }
 
-  hasHandledParallel.current = true;
-  setType("parallel");
+    // Handle completed spool
+    if (status === "all_completed") {
+      toast.error(
+        "This spool is already completed. Please choose another spool."
+      );
+      return;
+    }
 
-}, [currentItems]);
-
-
-
-
-
-
-
-const handlenext = (item) => {
-  if (!item) return;
-
-  const spoolId = item?.spool_id;
-
-  const safeSelectedStage = selectedStage || {};
-  const safeStageDetails = getstageDetailsData || {};
-
-  // ✅ get correct stage id
-  const stageId =
-    item?.type === "parallel"
-      ? safeSelectedStage[spoolId] || item?.stage_id
-      : item?.stage_id;
-
-  // ✅ get correct status
-  const stageData = safeStageDetails[spoolId] || {};
-
-
-
-  const status =
-    item?.type === "parallel"
-      ? stageData?.status || item?.status
-      : item?.status;
-
-
-      if(item?.message ){
-        toast.error(item?.message || "Failed to fetch stage details");
+    // Handle parallel stage missing sub-stage selection
+    if (item?.type === "parallel") {
+      const stageDataForSubstages = (newStageDetails || {})[spoolId] || {};
+      const substages = stageDataForSubstages?.substage_of_stage || [];
+      if (substages.length > 0 && !selectedSubStage[spoolId]) {
+        toast.error("Please select a sub-stage before proceeding.");
         return;
       }
+    }
 
-      
-      if(stageData?.status ==="blocked"){
-        toast.error(  stageData?.message || "Please complete QC first!")
-        return;
-      } 
-
-        if (status === "all_completed") {
-          toast.error("This spool is already completed. Please choose another spool.");
-          return;
-        }
-
-        navigate("/drawing-spool", {
-          state: {
-            spool_id: spoolId,
-            stage_id: stageId,
-          },
-        });
-};
+    // Navigate based on whether subStageId exists
+    if (selectedSubStage[spoolId]) {
+      navigate("/drawing-spool", {
+        state: {
+          spool_id: spoolId,
+          stage_id: stageId,
+          sub_stage_id: subStageId,
+          //     spool_stage_id:
+          //     subStageData?.spool_stage_id ||
+          //     stageData?.spool_stage_id ||
+          //     item?.spool_stage_id,
+        },
+      });
+    } else {
+      navigate("/drawing-spool", {
+        state: {
+          spool_id: spoolId,
+          stage_id: stageId,
+        },
+      });
+    }
+  };
 
 
   console.log("search", search)
   console.log("filteredSpools", filteredSpools)
+
+  const hasAnySubStages = currentItems?.some(item => {
+    if (item?.type !== "parallel") return false;
+    const stageDataForSubstages = (newStageDetails || {})[item?.spool_id] || {};
+    const substages = stageDataForSubstages?.substage_of_stage || [];
+    const filteredSubstages = substages.filter(sub => {
+      const s = (sub?.status || "").toLowerCase().trim();
+      return s !== "completed" && s !== "all_completed" && s !== "complete";
+    });
+    return filteredSubstages.length > 0;
+  });
 
   return (
     <>
@@ -640,11 +775,11 @@ const handlenext = (item) => {
                       <option value="">Status</option>
                       {status.map((item, index) => (
                         <option key={index} value={item}>
-                            {formatStatus(
-                                  item === "all_completed" || item === "completed"
-                                    ? "completed"
-                                    : item
-                            )}
+                          {formatStatus(
+                            item === "all_completed" || item === "completed"
+                              ? "completed"
+                              : item
+                          )}
                         </option>
                       ))}
                     </select>
@@ -663,7 +798,7 @@ const handlenext = (item) => {
 
 
 
-                    
+
 
                     <div className="form-check form-switch">
                       <input
@@ -690,6 +825,7 @@ const handlenext = (item) => {
                     <tr>
                       <th>Spool Number</th>
                       <th>Current Stage</th>
+                      {hasAnySubStages && <th>Sub Stage</th>}
                       <th>Status</th>
                       <th>Flagged</th>
                       <th>Issue Notes</th>
@@ -710,7 +846,7 @@ const handlenext = (item) => {
                           {/* <td>{item?.stage_name || "-"}</td> */}
 
                           {/* my new code */}
-                  {/* <td>
+                          {/* <td>
                     {item?.type === "parallel" ? (
                    
                         <select  style={{padding:'10px',borderRadius:'10px'}}
@@ -765,153 +901,241 @@ const handlenext = (item) => {
                     )}
                  </td> */}
 
-                                <td>
-                          {item?.type === "parallel"   ? (
-                            <select
-                              style={{ padding: "10px", borderRadius: "10px" }}
-                              value={
-                                selectedStage[item.spool_id] ??
-                                item?.stage_id ??
-                                item?.parallel_stages?.[0]?.stage_id ??
-                                ""
-                              }
-                              onChange={(e) => {
-                                const stageId = e.target.value;
-                                const spoolId = item?.spool_id;
-
-                                setSelectedStage((prev) => ({
-                                  ...prev,
-                                  [spoolId]: stageId,
-                                }));
-
-                                handleStageChange(stageId, spoolId);
-                              }}
-                            >
-                          
-                              {item?.parallel_stages?.map((stage) =>
-                                stage?.status !== "completed" ? (
-                                  <option key={stage?.stage_id} value={stage?.stage_id}>
-                                    {stage?.stage_name}
-                                  </option>
-                                ) : null
-                              )}
-                               </select>
-                                ) : (
-                                  item?.stage_name || "-"
-                                )}
-                               </td>
-
                           <td>
-
-
-                              {
-                                  (() => {
-                                    const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
-
-                                    const status =
-                                      // item?.type === "parallel"
-                                        // ? stageData?.status || item?.status || item?.parallel_stages?.status
-                                        // :
-                                         item?.status||item?.parallel_stages?.status|| stageData?.status ;
-
-                                    return (
-                                      <>
-                                        {status === "ready_to_start" && (
-                                          <div className="status-tag start">
-                                            <i className="hgi hgi-stroke hgi-play"></i>
-                                            Ready to Start
-                                          </div>
-                                        )}
-
-                                        {status === "paused" && (
-                                          <div className="status-tag paused">
-                                            <i className="hgi hgi-stroke hgi-pause"></i>
-                                            Paused
-                                          </div>
-                                        )}
-
-                                        {status === "in_progress" && (
-                                          <div className="status-tag inprogress">
-                                            <i className="hgi hgi-stroke hgi-refresh"></i>
-                                            In Progress
-                                          </div>
-                                        )}
-
-                                        {(status === "completed" || status === "all_completed") && (
-                                          <div className="status-tag completed">
-                                            <i className="hgi hgi-stroke hgi-checkmark-circle-01"></i>
-                                            Completed
-                                          </div>
-                                        )}
-                                      </>
-                                    );
-                                  })()
+                            {item?.type === "parallel" ? (
+                              <select
+                                style={{ padding: "10px", borderRadius: "10px" }}
+                                value={
+                                  selectedStage[item.spool_id] ??
+                                  item?.stage_id ??
+                                  item?.parallel_stages?.[0]?.stage_id ??
+                                  ""
                                 }
-  
+                                onChange={(e) => {
+                                  const stageId = e.target.value;
+                                  const spoolId = item?.spool_id;
+
+                                  setSelectedStage((prev) => ({
+                                    ...prev,
+                                    [spoolId]: stageId,
+                                  }));
+
+                                  handleStageChange(stageId, spoolId);
+                                }}
+                              >
+
+                                {item?.parallel_stages?.map((stage) =>
+                                  stage?.status !== "completed" ? (
+                                    <option key={stage?.stage_id} value={stage?.stage_id}>
+                                      {stage?.stage_name}
+                                    </option>
+                                  ) : null
+                                )}
+                              </select>
+                            ) : (
+                              item?.stage_name || "-"
+                            )}
+                          </td>
+
+                          {hasAnySubStages && (
+                            <td>
+                              {item?.type === "parallel" ? (
+                                (() => {
+                                  const stageData = (newStageDetails || {})[item?.spool_id] || {};
+                                  const substages = stageData?.substage_of_stage || [];
+
+                                  console.log("Sub-stages from API for Spool", item?.spool_id, ":", substages);
+
+                                  const filteredSubstages = substages.filter(sub => {
+                                    const s = (sub?.status || "").toLowerCase().trim();
+                                    return s !== "completed" && s !== "all_completed" && s !== "complete";
+                                  });
+
+                                  console.log("filteredSubstages", filteredSubstages);
+
+                                  if (filteredSubstages.length > 0) {
+                                    return (
+                                      <select
+                                        style={{ padding: "10px", borderRadius: "10px" }}
+                                        value={selectedSubStage[item.spool_id]?.sub_stage_id ?? selectedSubStage[item.spool_id] ?? ""}
+                                        onChange={(e) => {
+                                          const subStageId = e.target.value;
+                                          if (!subStageId) {
+                                            setSelectedSubStage((prev) => {
+                                              const newState = { ...prev };
+                                              delete newState[item.spool_id];
+                                              return newState;
+                                            });
+                                            return;
+                                          }
+                                          handleSubStageChange(subStageId, item.spool_id);
+                                        }}
+                                      >
+                                        <option value="">Select Sub Stage</option>
+                                        {filteredSubstages.map((sub) => (
+                                          sub.sub_stage_status !== "completed" ?
+                                            <option key={sub.id} value={sub.id}>
+                                              {sub.sub_stage_name}
+                                            </option> : null
+                                        ))}
+                                      </select>
+                                    );
+                                  }
+                                  return "-";
+                                })()
+                              ) : (
+                                "-"
+                              )}
+                            </td>
+                          )}
+                          <td>
+                            {
+                              (() => {
+                                const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
+                                const subStageData = selectedSubStage[item?.spool_id];
+                                const stageDataForSubstages = (newStageDetails || {})[item?.spool_id] || {};
+                                const substages = stageDataForSubstages?.substage_of_stage || [];
+                                const filteredSubstages = substages.filter(sub => {
+                                  const s = (sub?.status || "").toLowerCase();
+                                  return s !== "completed" && s !== "all_completed" && s !== "complete";
+                                });
+                                const hasSubStagesToSelect = filteredSubstages.length > 0;
+
+                                if (item?.type === "parallel" && hasSubStagesToSelect && !subStageData?.sub_stage_id) {
+                                  return <span>-</span>;
+                                }
+
+                                const status = item?.type === "parallel" && subStageData?.sub_stage_id
+                                  ? subStageData?.status
+                                  : (item?.type === "parallel"
+                                    ? (stageData?.status || item?.status || item?.parallel_stages?.status)
+                                    : (item?.status || item?.parallel_stages?.status || stageData?.status));
+
+                                return (
+                                  <>
+                                    {status === "ready_to_start" && (
+                                      <div className="status-tag start">
+                                        <i className="hgi hgi-stroke hgi-play"></i>
+                                        Ready to Start
+                                      </div>
+                                    )}
+
+                                    {status === "paused" && (
+                                      <div className="status-tag paused">
+                                        <i className="hgi hgi-stroke hgi-pause"></i>
+                                        Paused
+                                      </div>
+                                    )}
+
+                                    {status === "in_progress" && (
+                                      <div className="status-tag inprogress">
+                                        <i className="hgi hgi-stroke hgi-refresh"></i>
+                                        In Progress
+                                      </div>
+                                    )}
+
+                                    {(status === "completed" || status === "all_completed") && (
+                                      <div className="status-tag completed">
+                                        <i className="hgi hgi-stroke hgi-checkmark-circle-01"></i>
+                                        Completed
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()
+                            }
+
                           </td>
                           <td>
+                            {
+                              (() => {
+                                const subStageData = selectedSubStage[item?.spool_id];
+                                const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
+                                const stageDataForSubstages = (newStageDetails || {})[item?.spool_id] || {};
+                                const substages = stageDataForSubstages?.substage_of_stage || [];
+                                const filteredSubstages = substages.filter(sub => {
+                                  const s = (sub?.status || "").toLowerCase();
+                                  return s !== "completed" && s !== "all_completed" && s !== "complete";
+                                });
+                                const hasSubStagesToSelect = filteredSubstages.length > 0;
 
-                          
-                                                            {
-                                    (
-                                      item?.type === "parallel"
-                                        ? (
-                                            ((getstageDetailsData || {})[item?.spool_id]?.flag_status || item?.flag_status) &&
-                                            (getstageDetailsData || {})[item?.spool_id]?.flag_status !== "closed" &&
-                                            (getstageDetailsData || {})[item?.spool_id]?.flag_status !== "" &&
-                                            ((getstageDetailsData || {})[item?.spool_id]?.status || item?.status) !== "all_completed"
-                                          )
-                                        : (
-                                            item?.flag_status &&
-                                            item?.flag_status !== "closed" &&
-                                            item?.flag_status !== "" &&
-                                            item?.status !== "all_completed"
-                                          )
-                                    ) ? (
-                                      <div className="status-tag flagged">
-                                        <i className="hgi hgi-stroke hgi-flag-02"></i>
-                                        Flagged
-                                      </div>
-                                    ) : (
-                                      <span>-</span>
-                                    )
-                                  }
+                                if (item?.type === "parallel" && hasSubStagesToSelect && !subStageData?.sub_stage_id) {
+                                  return <span>-</span>;
+                                }
 
-                                                          
-                           </td>
+                                const flagStatus = item?.type === "parallel" && subStageData?.sub_stage_id
+                                  ? subStageData?.flag_status
+                                  : (item?.type === "parallel" ? (stageData?.flag_status || item?.flag_status) : item?.flag_status);
+
+                                const mainStatus = item?.type === "parallel" && subStageData?.sub_stage_id
+                                  ? subStageData?.status
+                                  : (item?.type === "parallel" ? (stageData?.status || item?.status) : item?.status);
+
+                                return (
+                                  flagStatus &&
+                                  flagStatus !== "closed" &&
+                                  flagStatus !== "" &&
+                                  mainStatus !== "all_completed"
+                                ) ? (
+                                  <div className="status-tag flagged">
+                                    <i className="hgi hgi-stroke hgi-flag-02"></i>
+                                    Flagged
+                                  </div>
+                                ) : (
+                                  <span>-</span>
+                                );
+                              })()
+                            }
+                          </td>
 
 
 
                           <td>
-                            {(
-                              (item?.type === "parallel"
-                                ? ((getstageDetailsData || {})[item?.spool_id]?.flag_reason || item?.flag_reason)
-                                : item?.flag_reason) &&
-                              (item?.type === "parallel"
-                                ? ((getstageDetailsData || {})[item?.spool_id]?.status || item?.status)
-                                : item?.status) !== "all_completed" &&
-                              (item?.type === "parallel"
-                                ? ((getstageDetailsData || {})[item?.spool_id]?.flag_status || item?.flag_status)
-                                : item?.flag_status) !== "closed"
-                            ) ? (
-                              <a
-                                type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#reported-issue-popup"
-                                className="view-btn"
-                                onClick={() =>
-                                  setFlagText(
-                                    item?.type === "parallel"
-                                      ? ((getstageDetailsData || {})[item?.spool_id]?.flag_reason || item?.flag_reason)
-                                      : item?.flag_reason
-                                  )
-                                }
-                              >
-                                View
-                              </a>
-                            ) : (
-                              <span>-</span>
-                            )}
+                            {(() => {
+                              const subStageData = selectedSubStage[item?.spool_id];
+                              const stageData = (getstageDetailsData || {})[item?.spool_id] || {};
+                              const stageDataForSubstages = (newStageDetails || {})[item?.spool_id] || {};
+                              const substages = stageDataForSubstages?.substage_of_stage || [];
+                              const filteredSubstages = substages.filter(sub => {
+                                const s = (sub?.status || "").toLowerCase();
+                                return s !== "completed" && s !== "all_completed" && s !== "complete";
+                              });
+                              const hasSubStagesToSelect = filteredSubstages.length > 0;
+
+                              if (item?.type === "parallel" && hasSubStagesToSelect && !subStageData?.sub_stage_id) {
+                                return <span>-</span>;
+                              }
+
+                              const flagReason = item?.type === "parallel" && subStageData?.sub_stage_id
+                                ? subStageData?.flag_reason
+                                : (item?.type === "parallel" ? (stageData?.flag_reason || item?.flag_reason) : item?.flag_reason);
+
+                              const flagStatus = item?.type === "parallel" && subStageData?.sub_stage_id
+                                ? subStageData?.flag_status
+                                : (item?.type === "parallel" ? (stageData?.flag_status || item?.flag_status) : item?.flag_status);
+
+                              const mainStatus = item?.type === "parallel" && subStageData?.sub_stage_id
+                                ? subStageData?.status
+                                : (item?.type === "parallel" ? (stageData?.status || item?.status) : item?.status);
+
+                              return (
+                                flagReason &&
+                                mainStatus !== "all_completed" &&
+                                flagStatus !== "closed"
+                              ) ? (
+                                <a
+                                  type="button"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#reported-issue-popup"
+                                  className="view-btn"
+                                  onClick={() => setFlagText(flagReason)}
+                                >
+                                  View
+                                </a>
+                              ) : (
+                                <span>-</span>
+                              );
+                            })()}
                           </td>
 
 
@@ -942,11 +1166,11 @@ const handlenext = (item) => {
                                 Open
                               </button>
                             </div>
-                          </td> 
+                          </td>
                         </tr>
                       ))) : (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: "center", padding: "20px" }}>
+                        <td colSpan={7} style={{ textAlign: "center", padding: "20px" }}>
                           No spools found .
                         </td>
                       </tr>

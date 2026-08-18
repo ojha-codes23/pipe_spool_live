@@ -41,6 +41,7 @@ const ReportedIssuePopup = ({ handleSubmit }) => {
                                         <textarea
                                             value={reportText}
                                             onChange={(e) => setReportText(e.target.value)}
+                                            onKeyDown={(e) => e.stopPropagation()}
                                             placeholder="Describe the issue with this spool, stage, or any concerns..."></textarea>
                                         <div className="other-popup-cta-grp mt-2">
                                             <button type="button" className="primary-cta non-active"

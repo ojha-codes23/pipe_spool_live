@@ -10,9 +10,39 @@ import { toast } from 'react-hot-toast'
 const imagebaseUrl = import.meta.env.VITE_IMAGE_URL;
 
 const getActionFromBarcode = (code) => {
-    if (!code) return null;
+    if (!code) return { action: null, subStageId: null };
 
-    return code.split("|").pop().split("-").pop();
+    let subStageId = null;
+    const subStageMatch = code.match(/substage_(\d+)/i);
+    if (subStageMatch) {
+        subStageId = parseInt(subStageMatch[1], 10);
+    }
+
+    let action = null;
+
+    // Safely match the action keyword exactly, avoiding substrings like 'END' in 'backend'
+    const actionMatch = code.match(/(START|END|COMPLETE|PAUSE|RESUME)(?:\.\w+)?$/i);
+    if (actionMatch) {
+        action = actionMatch[1].toUpperCase();
+    } else {
+        // Fallback for custom formats like SP-001|COMPLETE
+        action = code.split("|").pop().split("-").pop().toUpperCase();
+    }
+
+    if (action === 'COMPLETE') {
+        action = 'END';
+    } else if (!["START", "END", "PAUSE", "RESUME"].includes(action)) {
+        // Last resort strict boundary check
+        const strictMatch = code.match(/\b(START|END|COMPLETE|PAUSE|RESUME)\b/i);
+        if (strictMatch) {
+            action = strictMatch[1].toUpperCase();
+            if (action === 'COMPLETE') action = 'END';
+        } else {
+            action = null; // Unrecognized format
+        }
+    }
+
+    return { action, subStageId };
 };
 
 const STATUS_CONFIG = {
@@ -42,7 +72,7 @@ const DrawingSpool = () => {
     const [pauseId, setPauseId] = useState(null)
     const navigate = useNavigate()
     const location = useLocation();
-    const { stage_id, spool_id } = location?.state || {};
+    const { stage_id, spool_id, sub_stage_id } = location?.state || {};
     const startTime = useRef(0);
     const scannerInputRef = useRef(null);
     const { state } = useLocation();
@@ -59,6 +89,7 @@ const DrawingSpool = () => {
     const [showReportIssue, setShowReportIssue] = useState(false)
     const [spoolId, setSpoolId] = useState(null || spool_id)
     const [stageId, setStageId] = useState(null || stage_id);
+    const [subStageid, setSubStageid] = useState(null || sub_stage_id)
     const [spoolDetails, setSpoolDetails] = useState(null);
     const [type, setType] = useState(null)
     const [isTablet, setIsTablet] = useState(false);
@@ -76,12 +107,14 @@ const DrawingSpool = () => {
         };
     }, []);
 
-    const onScan = async (eventCall) => {
+    const onScan = async (eventCall, subStageIdFromScanner = null) => {
         try {
             const entity_id = JSON.parse(localStorage.getItem('selectedEntity'))?.id
             const project_id = spoolDetails?.project?.id
             const spool_id = spoolId
             const stage_id = stageId
+            const activeSubStageId = subStageIdFromScanner || subStageid;
+
             if (spoolDetails?.flag_status === 'open') {
                 toast.error('Your flag has opend please wait while flag closed by admin!');
                 return;
@@ -89,12 +122,13 @@ const DrawingSpool = () => {
             if (eventCall === 'START' || eventCall === 'END') {
                 if (eventCall === 'START') {
                     if (currentStatus === 'ready_to_start') {
-                        
+
                         await dispatch(startAndComplateTask({
                             entity_id: entity_id,
                             project_id: project_id,
                             spool_id: spool_id,
                             stage_id: stage_id,
+                            ...(activeSubStageId && { sub_stage_id: activeSubStageId }),
                             action_type: 'start'
                         }))
                     } else {
@@ -103,34 +137,43 @@ const DrawingSpool = () => {
                 }
                 else {
                     if (currentStatus === 'in_progress') {
-                        
+
                         await dispatch(startAndComplateTask({
                             entity_id: entity_id,
                             project_id: project_id,
                             spool_id: spool_id,
                             stage_id: stage_id,
+                            ...(activeSubStageId && { sub_stage_id: activeSubStageId }),
                             action_type: 'complete'
                         }))
                     } else {
                         toast.error('Your task is not in progress!')
                     }
                 }
-                const data = await dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId }));
+                const data = await dispatch(fetchSpoolsDrawing({
+                    spool_id: spoolId, stage_id: stageId, sub_stage_id: subStageid || null
+                }));
                 if (data?.payload?.data?.stage_barcode?.stage_status === 'completed') {
+                    if (subStageid) {
+                        setSubStageid(null)
+                    } else {
+                        setStageId(null)
+                    }
                     // navigate(-1)
                 }
             } else if (eventCall === 'PAUSE' || eventCall === 'RESUME') {
                 if (eventCall === 'PAUSE') {
                     if (currentStatus === 'in_progress' && currentStatus !== 'ready_to_start') {
-                        
+
                         const pauseData = await dispatch(pauseAndResumeTask({
                             entity_id: entity_id,
                             project_id: project_id,
                             spool_id: spool_id,
                             stage_id: stage_id,
+                            ...(activeSubStageId && { sub_stage_id: activeSubStageId }),
                             action_type: 'pause'
                         }));
-                        
+
                         if (pauseData?.payload?.success) {
                             localStorage.setItem('project_assign_id', pauseData?.payload?.data?.id)
                             setPauseId(pauseData?.payload?.data?.id)
@@ -140,19 +183,20 @@ const DrawingSpool = () => {
                     }
                 } else {
                     if (currentStatus === 'paused') {
-                       
+
                         await dispatch(pauseAndResumeTask({
                             entity_id: entity_id,
                             project_id: project_id,
                             spool_id: spool_id,
                             stage_id: stage_id,
+                            ...(activeSubStageId && { sub_stage_id: activeSubStageId }),
                             action_type: 'resume'
                         }))
                     } else {
                         toast.error('Your task is already in progress!')
                     }
                 }
-                const data = await dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId }));
+                const data = await dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId, sub_stage_id: activeSubStageId || null }));
                 if (data?.payload?.data?.stage_barcode?.stage_status === 'completed') {
                     // navigate(-1)
                 }
@@ -183,26 +227,11 @@ const DrawingSpool = () => {
         }
     }, [state]);
 
-    // useEffect(() => {
-    //     if (spoolId && stageId) {
-    //         dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId }));
-    //     }
-    // }, [spoolId, stageId])
-
-    // useEffect(() => {
-    //    
-    //         if (spoolId && stageId) {
-    //             dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId }));
-    //         }
-    //         return () => {
-    //             dispatch(resetSpoolDrawingDetails());
-    //         };
-    // }, [spoolId, stageId]);
     useEffect(() => {
         const fetchData = async () => {
             if (spoolId && stageId) {
                 try {
-                    await dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId })).unwrap();
+                    await dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId, sub_stage_id: subStageid || null })).unwrap();
                 } catch (error) {
                     if (error?.code === 404 || error?.status === 404) {
                         console.log("Redirecting due to 404:", error);
@@ -216,19 +245,6 @@ const DrawingSpool = () => {
             dispatch(resetSpoolDrawingDetails());
         };
     }, [spoolId, stageId, dispatch, navigate]);
-
-    // useEffect(() => {
-    //     if (spoolDrawingDetails) {
-    //         console.log("spoolDrawingDetails", spoolDrawingDetails)
-    //         setSpoolDetails(spoolDrawingDetails)
-    //     };
-    //     setTimeout(() => {
-    //         handleRediract()
-    //     }, 3000)
-    //     // if (spoolDrawingDetails?.stage_barcode?.stage_status === 'completed') {
-    //     //     navigate(-1)
-    //     // }
-    // }, [spoolDrawingDetails])
 
     useEffect(() => {
         if (!spoolDrawingDetails) return;
@@ -247,253 +263,19 @@ const DrawingSpool = () => {
 
     const currentStatus =
         spoolDetails?.stage_barcode?.stage_status;
-
-
-    // useEffect(() => {
-    //     const inputEl = scannerInputRef.current;
-    //     if (!inputEl) return;
-
-    //     const handleKeyDown = async (e) => {
-    //         if (e.key !== "Enter") return;
-    //         e.preventDefault();
-    //         e.stopPropagation();
-    //         const scannedCodeData = e.target.value.trim();
-    //         if (!scannedCodeData) return;
-    //         const action = getActionFromBarcode(scannedCodeData);
-    //         await onScan(action);
-    //         e.target.value = "";
-    //     };
-    //     inputEl.addEventListener("keydown", handleKeyDown);
-    //     const handleModalHidden = () => {
-    //         inputEl.focus();
-    //     };
-
-    //     document.addEventListener("hidden.bs.modal", handleModalHidden);
-    //     inputEl.focus();
-
-    //     return () => {
-    //         inputEl.removeEventListener("keydown", handleKeyDown);
-    //         document.removeEventListener("hidden.bs.modal", handleModalHidden);
-    //     };
-    // }, [onScan]);
-
-    // Barcode Scanner
-
-    // useEffect(() => {
-    //     const inputEl = scannerInputRef.current;
-    //     if (!inputEl) return;
-
-    //     const handleKeyDown = async (e) => {
-    //         if (e.key !== "Enter") return;
-    //         e.preventDefault();
-    //         e.stopPropagation();
-    //         console.log("e", e)
-    //         const scannedCodeData = e.target.value.trim();
-    //         console.log("scannedCodeData", scannedCodeData)
-    //         if (!scannedCodeData) return;
-    //         const action = getActionFromBarcode(scannedCodeData);
-    //         console.log("action", action)
-    //         await onScan(action);
-    //         e.target.value = "";
-    //     };
-
-    //     // const handleBlur = () => {
-    //     //     setTimeout(() => {
-    //     //         inputEl.focus();
-    //     //     }, 0);
-    //     // };
-    //     const handleBlur = () => {
-    //         setTimeout(() => {
-    //             const modalOpen = document.querySelector(".modal.show");
-    //             if (modalOpen) return; // popup is open, don’t focus scanner
-    //             inputEl.focus();
-    //         }, 0);
-    //     };
-
-    //     inputEl.addEventListener("keydown", handleKeyDown);
-    //     inputEl.addEventListener("blur", handleBlur);
-    //     const handleModalHidden = () => {
-    //         inputEl.focus();
-    //     };
-    //     document.addEventListener("hidden.bs.modal", handleModalHidden);
-
-    //     // Initial focus
-    //     inputEl.focus();
-
-    //     return () => {
-    //         inputEl.removeEventListener("keydown", handleKeyDown);
-    //         inputEl.removeEventListener("blur", handleBlur);
-    //         document.removeEventListener("hidden.bs.modal", handleModalHidden);
-    //     };
-    // }, [onScan]);
-
-    // useEffect(() => {
-    //     const inputEl = scannerInputRef.current;
-    //     console.log("inputEl", inputEl)
-    //     if (!inputEl) return;
-
-    //     // Focus helper
-    //     const focusInput = () => {
-    //         const modalOpen = document.querySelector(".modal.show");
-    //         if (!modalOpen) {
-    //             inputEl.focus({ preventScroll: true });
-    //         }
-    //     };
-    //     let isProcessing = false;
-    //     // const handleKeyDown = async (e) => {
-    //     //     console.log("e", e)
-    //     //     // if (e.key !== "Enter") return;
-    //     //     if (e.key !== "Enter" && e.key !== " ") return;
-    //     //     if (isProcessing) return;
-
-    //     //     e.preventDefault();
-    //     //     e.stopPropagation();
-
-    //     //     isProcessing = true;
-    //     //     const scannedCodeData = inputEl.value.trim();
-    //     //     console.log("Scanned Barcode:", scannedCodeData);
-    //     //     if (!scannedCodeData) return;
-
-    //     //     try {
-    //     //         const action = getActionFromBarcode(scannedCodeData);
-    //     //         console.log("action value:", action);
-    //     //         await onScan(action);
-    //     //     } catch (err) {
-    //     //         console.error("Scan error:", err);
-    //     //     }
-
-    //     //     inputEl.value = ""; // clear after scan
-    //     //     focusInput();       // refocus
-    //     // };
-
-    //     // 🔹 Refocus if blur
-
-    //     // let isProcessing = false;
-
-    //     // const handleKeyDown = async (e) => {
-    //     //     if (e.key !== "Enter" && e.key !== " ") return;
-    //     //     if (isProcessing) return;
-
-    //     //     isProcessing = true;
-
-    //     //     e.preventDefault();
-    //     //     e.stopPropagation();
-
-    //     //     const scannedCodeData = inputEl.value.trim();
-    //     //     if (!scannedCodeData) {
-    //     //         isProcessing = false;
-    //     //         return;
-    //     //     }
-
-    //     //     try {
-    //     //         const action = getActionFromBarcode(scannedCodeData);
-    //     //         await onScan(action);
-    //     //     } catch (err) {
-    //     //         console.error("Scan error:", err);
-    //     //     }
-
-    //     //     inputEl.value = "";
-    //     //     focusInput();
-
-    //     //     // Small delay before allowing next scan
-    //     //     setTimeout(() => {
-    //     //         isProcessing = false;
-    //     //     }, 100);
-    //     // };
-
-
-    //     let scanLock = false;
-
-    //     const handleKeyDown = async (e) => {
-    //         console.log("e", e)
-    //         if (e.repeat) return;
-    //         if (e.key !== "Enter" && e.key !== " ") return;
-    //         if (scanLock) return;
-
-    //         scanLock = true;
-
-    //         e.preventDefault();
-    //         e.stopPropagation();
-
-    //         const scannedCodeData = inputEl.value.trim();
-    //         console.log("scannedCodeData", scannedCodeData)
-    //         if (!scannedCodeData) {
-    //             scanLock = false;
-    //             return;
-    //         }
-
-    //         try {
-    //             const action = getActionFromBarcode(scannedCodeData);
-    //             console.log("action", action)
-    //             await onScan(action);
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-
-    //         inputEl.value = "";
-
-    //         setTimeout(() => {
-    //             scanLock = false;
-    //             focusInput();
-    //         }, 150);
-    //     };
-
-
-    //     const handleBlur = () => {
-    //         setTimeout(() => {
-    //             focusInput();
-    //         }, 0);
-    //     };
-
-    //     // 🔹 Refocus when tab visible
-    //     const handleVisibilityChange = () => {
-    //         if (!document.hidden) {
-    //             focusInput();
-    //         }
-    //     };
-
-    //     // 🔹 Refocus when window regains focus
-    //     const handleWindowFocus = () => {
-    //         focusInput();
-    //     };
-
-    //     // 🔹 Refocus after bootstrap modal closes
-    //     const handleModalHidden = () => {
-    //         focusInput();
-    //     };
-
-    //     // Attach listeners
-    //     inputEl.addEventListener("keydown", handleKeyDown);
-    //     inputEl.addEventListener("blur", handleBlur);
-    //     document.addEventListener("visibilitychange", handleVisibilityChange);
-    //     window.addEventListener("focus", handleWindowFocus);
-    //     document.addEventListener("hidden.bs.modal", handleModalHidden);
-
-    //     // Initial focus
-    //     focusInput();
-
-    //     return () => {
-    //         inputEl.removeEventListener("keydown", handleKeyDown);
-    //         inputEl.removeEventListener("blur", handleBlur);
-    //         document.removeEventListener("visibilitychange", handleVisibilityChange);
-    //         window.removeEventListener("focus", handleWindowFocus);
-    //         document.removeEventListener("hidden.bs.modal", handleModalHidden);
-    //     };
-    // }, [onScan]);
-
     useEffect(() => {
         let buffer = "";
         let lastKeyTime = 0;
         let scanLock = false;
-        const SCAN_SPEED_THRESHOLD = 50;
+        const SCAN_SPEED_THRESHOLD = 200;
         const SCAN_COMPLETE_DELAY = 100;
-        const MIN_BARCODE_LENGTH = 3;
+        const MIN_BARCODE_LENGTH = 1;
 
         let scanTimeout = null;
 
         const handleKeyDown = async (e) => {
             if (!e.key) return;
-           
+
             const currentTime = Date.now();
             const timeDiff = currentTime - lastKeyTime;
             lastKeyTime = currentTime;
@@ -515,7 +297,7 @@ const DrawingSpool = () => {
 
             scanTimeout = setTimeout(async () => {
                 const cleaned = buffer.trim();
-                
+
                 buffer = "";
 
                 // ✅ Ignore empty or too short values
@@ -527,8 +309,14 @@ const DrawingSpool = () => {
                 scanLock = true;
 
                 try {
-                    const action = getActionFromBarcode(cleaned);
-                    await onScan(action?.toUpperCase());
+                    const parsed = getActionFromBarcode(cleaned);
+                    if (!parsed.action || !["START", "END", "PAUSE", "RESUME"].includes(parsed.action)) {
+                        if (cleaned.length >= 6) {
+                            toast.error("Unrecognized barcode format: " + cleaned);
+                        }
+                        return;
+                    }
+                    await onScan(parsed.action, parsed.subStageId);
                 } catch (err) {
                     console.error("Scan error:", err);
                 }
@@ -710,11 +498,21 @@ const DrawingSpool = () => {
         }
         const project_assign_id = JSON.parse(localStorage.getItem('project_assign_id'))
         if (currentStatus === 'in_progress' || currentStatus === 'paused' && currentStatus !== 'ready_to_start') {
-            await dispatch(reportTask({
-                project_assign_id: pauseId || project_assign_id,
-                reason: reason,
-            }))
-            dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId }))
+            // await dispatch(reportTask({
+            //     project_assign_id: pauseId || project_assign_id,
+            //     sub_stage_assign_id: subStageId? subStageIdproject_assign_id : null,
+            //     reason: reason,
+            // }))
+            await dispatch(
+                reportTask({
+                    ...(subStageid
+                        ? { sub_stage_assign_id: project_assign_id || pauseId || spoolDetails?.stage_barcode?.id }
+                        : { project_assign_id: project_assign_id || pauseId || spoolDetails?.stage_barcode?.id }),
+                    reason,
+                })
+            );
+
+            dispatch(fetchSpoolsDrawing({ spool_id: spoolId, stage_id: stageId, sub_stage_id: subStageid || null }))
             localStorage.removeItem('project_assign_id');
             setPauseId(null)
             const modalEl = document.getElementById("reported-issue-popup");
@@ -759,7 +557,7 @@ const DrawingSpool = () => {
                                 <div className="col-lg-6 col-md-9">
                                     <div className="spool-strip-details">
                                         <p>Spool Number <b>{spoolDetails?.spool_drawing?.spool_number}</b></p>
-                                        <p>Current Stage <b>{spoolDetails?.stage_barcode?.stage_name}</b></p>
+                                        <p>Current Stage <b>{subStageid ? spoolDetails?.stage_barcode?.sub_stage_name : spoolDetails?.stage_barcode?.stage_name}</b></p>
                                     </div>
                                 </div>
                                 <div className="col-lg-6 col-md-3">
@@ -824,11 +622,11 @@ const DrawingSpool = () => {
                                         />
                                         <div className="bar-code-in">
                                             <p>Scan to Start & Complete</p>
-                                            <img src={`${currentStatus === 'ready_to_start' ? imagebaseUrl + spoolDetails?.stage_barcode?.start_barcode : imagebaseUrl + spoolDetails?.stage_barcode?.end_barcode}`} alt="" />
+                                            <img src={`${imagebaseUrl}${currentStatus === 'ready_to_start' ? (spoolDetails?.stage_barcode?.start_barcode || spoolDetails?.spool_drawing?.start_barcode) : (spoolDetails?.stage_barcode?.end_barcode || spoolDetails?.spool_drawing?.end_barcode)}`} alt="" />
                                         </div>
                                         <div className="bar-code-in" >
                                             <p>Scan to Pause & Resume</p>
-                                            <img src={`${currentStatus === 'paused' ? imagebaseUrl + spoolDetails?.spool_drawing?.resume_barcode : imagebaseUrl + spoolDetails?.spool_drawing?.pause_barcode}`} alt="" />
+                                            <img src={`${imagebaseUrl}${currentStatus === 'paused' ? (spoolDetails?.stage_barcode?.resume_barcode || spoolDetails?.spool_drawing?.resume_barcode) : (spoolDetails?.stage_barcode?.pause_barcode || spoolDetails?.spool_drawing?.pause_barcode)}`} alt="" />
                                         </div>
                                     </div>
                                     {/* <!-- DESKTOP --> */}
