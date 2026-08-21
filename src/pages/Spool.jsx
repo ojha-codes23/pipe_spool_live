@@ -82,6 +82,26 @@ const Spool = () => {
   // };
 
 
+  const handleSubStageChange = async (stageId, spoolId) => {
+    try {
+      const response = await dispatch(getSubStageDetails({
+        project_id: projectsData?.project_id,
+        sub_stage_id: stageId,
+        spool_id: spoolId,
+      })).unwrap();
+      if (response?.data) {
+        setSelectedSubStage((prev) => {
+          return {
+            ...prev,
+            [spoolId]: { ...response.data, sub_stage_id: stageId }
+          }
+        })
+      }
+    } catch (error) {
+      toast.error(error?.message || "Failed to change sub stage");
+    }
+  };
+
   const handleStageChange = async (stageId, spoolId) => {
     console.log("Stage ID:", stageId);
     console.log("Spool ID:", spoolId);
@@ -107,33 +127,26 @@ const Spool = () => {
           ...prev,
           [spoolId]: response.data,
         }));
+
+        const substages = response?.data?.substage_of_stage || [];
+        const filteredSubstages = substages.filter((sub) => {
+          const s = (sub?.status || sub?.sub_stage_status || "").toLowerCase().trim();
+          return s !== "completed" && s !== "all_completed" && s !== "complete";
+        });
+
+        if (filteredSubstages.length > 0) {
+          const firstId = filteredSubstages[0].id;
+          setSelectedSubStage((prev) => ({
+            ...prev,
+            [spoolId]: { sub_stage_id: firstId }
+          }));
+          handleSubStageChange(firstId, spoolId);
+        }
       }
     } catch (error) {
       toast.error(error?.message || "Failed to change stage");
     }
   };
-
-
-
-  const handleSubStageChange = async (stageId, spoolId) => {
-    try {
-      const response = await dispatch(getSubStageDetails({
-        project_id: projectsData?.project_id,
-        sub_stage_id: stageId,
-        spool_id: spoolId,
-      })).unwrap();
-      if (response?.data) {
-        setSelectedSubStage((prev) => {
-          return {
-            ...prev,
-            [spoolId]: response.data
-          }
-        })
-      }
-    } catch (error) {
-      toast.error(error?.message || "Failed to change sub stage");
-    }
-  }
 
 
   // useEffect(() => {
@@ -947,7 +960,7 @@ const Spool = () => {
                                   console.log("Sub-stages from API for Spool", item?.spool_id, ":", substages);
 
                                   const filteredSubstages = substages.filter(sub => {
-                                    const s = (sub?.status || "").toLowerCase().trim();
+                                    const s = (sub?.status || sub?.sub_stage_status || "").toLowerCase().trim();
                                     return s !== "completed" && s !== "all_completed" && s !== "complete";
                                   });
 
@@ -957,7 +970,7 @@ const Spool = () => {
                                     return (
                                       <select
                                         style={{ padding: "10px", borderRadius: "10px" }}
-                                        value={selectedSubStage[item.spool_id]?.sub_stage_id ?? selectedSubStage[item.spool_id] ?? ""}
+                                        value={selectedSubStage[item.spool_id]?.sub_stage_id ?? selectedSubStage[item.spool_id] ?? filteredSubstages[0]?.id ?? ""}
                                         onChange={(e) => {
                                           const subStageId = e.target.value;
                                           if (!subStageId) {
@@ -971,12 +984,10 @@ const Spool = () => {
                                           handleSubStageChange(subStageId, item.spool_id);
                                         }}
                                       >
-                                        <option value="">Select Sub Stage</option>
                                         {filteredSubstages.map((sub) => (
-                                          sub.sub_stage_status !== "completed" ?
-                                            <option key={sub.id} value={sub.id}>
-                                              {sub.sub_stage_name}
-                                            </option> : null
+                                          <option key={sub.id} value={sub.id}>
+                                            {sub.sub_stage_name}
+                                          </option>
                                         ))}
                                       </select>
                                     );
