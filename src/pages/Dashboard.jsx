@@ -71,7 +71,7 @@ const Dashboard = () => {
       <div className="page-wrapper">
         <Header />
         <main className="projects-page">
-          <div className="container">
+          <div className="container-fluid">
             <div className="row">
               <div className="col-lg-6 col-md-6">
                 <div className="page-heading">
@@ -95,7 +95,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="container">
+          <div className="container-fluid">
             <div className="grid-wrap">
               <div className="row">
                 {currentItems?.length > 0 ? (

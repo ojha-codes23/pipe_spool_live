@@ -532,7 +532,7 @@ const DrawingSpool = () => {
             <div className="page-wrapper">
                 <Header />
                 <main className="spools-page">
-                    <div className="container">
+                    <div className="container-fluid">
                         <div className="row">
                             <div className="col-lg-6 col-md-6">
                                 <div className="page-heading">
@@ -552,7 +552,7 @@ const DrawingSpool = () => {
                         </div>
                     </div>
                     <div className="spool-strip-wrp">
-                        <div className="container">
+                        <div className="container-fluid">
                             <div className="row">
                                 <div className="col-lg-6 col-md-9">
                                     <div className="spool-strip-details">
@@ -608,7 +608,7 @@ const DrawingSpool = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="container">
+                    <div className="container-fluid">
                         <div className="row">
                             <div className="col-lg-12">
                                 <div className="drawing-wrp">

@@ -208,7 +208,7 @@ const Header = () => {
   return (
     <>
       <header>
-        <div className="container">
+        <div className="container-fluid">
           <div className="row">
             <div className="col-lg-6 col-md-3">
               <div className="header-in">
