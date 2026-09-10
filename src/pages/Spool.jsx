@@ -15,7 +15,6 @@ const status = [
   "paused",
   "in_progress",
   "all_completed",
-
 ]
 
 const Spool = () => {
@@ -27,8 +26,10 @@ const Spool = () => {
   const itemsPerPage = 10;
 
   const selected = useSelector((state) => state.entity.selected);
-  const { projectsData, getstageDetailsData, } = useSelector((state) => state.project);
+  const { projectsData, getstageDetailsData, loading } = useSelector((state) => state.project);
 
+
+  console.log("projectsData", projectsData)
 
   console.log("getstageDetailsData", getstageDetailsData)
   const projectsDataRef = useRef(projectsData);
@@ -263,12 +264,7 @@ const Spool = () => {
       );
     }
     console.log("filtered", filtered)
-    // if (selectStage) {
-    //   const term = selectStage.toLowerCase();
-    //   filtered = filtered.filter(item =>
-    //     item?.stage_name?.toLowerCase().includes(term)
-    //   );
-    // }
+
 
     if (selectStage) {
       const term = selectStage.toLowerCase();
@@ -283,105 +279,6 @@ const Spool = () => {
         return item?.stage_name?.toLowerCase().includes(term);
       });
     }
-
-
-
-    // if (selectStatus) {
-    //   const term = selectStatus.toLowerCase();
-    //   filtered = filtered.filter(item =>
-    //     item?.status?.toLowerCase().includes(term)
-    //   );
-    // }
-
-
-    // if (selectStatus) {
-
-    //   const term = (selectStatus === "all_completed" || selectStatus === "completed")
-    //     ? "completed"
-    //     : selectStatus.toLowerCase().replace(/\s+/g, "_");
-
-    //      filtered = filtered.filter((item) => {
-    //     const stageDetails = getstageDetailsData?.[item?.spool_id]||item?.parallel_stages?.status;
-
-    //     console.log("stageDetails", stageDetails, item)
-
-    //     const stages = stageDetails?.stages?.status||item?.parallel_stages?.status||[] ;
-
-    //     console.log("stages", stages)
-
-    //     if (stages.length > 0) {
-    //       return stages.every((stage) => {
-    //         const stageStatus = (stage?.status || "").toLowerCase();
-    //         if (term === "completed") {
-    //           return stageStatus === "completed" || stageStatus === "all_completed";
-    //         }
-    //         return stageStatus === term;
-    //       });
-    //     }
-
-    //     const mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
-    //     if (term === "completed") {
-    //       return mainStatus === "completed" || mainStatus === "all_completed";
-    //     }
-    //     return mainStatus === term;
-    //   });
-    // }
-
-
-    // if (selectStatus) {
-    //   const term =
-    //     selectStatus === "all_completed" || selectStatus === "completed"
-    //       ? "completed"
-    //       : selectStatus.toLowerCase().replace(/\s+/g, "_");
-
-    //       console.log(filtered, "before  status filter")
-
-    //   filtered = filtered.filter((item) => {
-
-
-    //     console.log("item?.parallel_stages", item?.parallel_stages)
-    //     const stageDetails = item?.parallel_stages || item || {};
-
-
-    //       console.log("stageDetails", stageDetails, item)
-
-    //     const stages =
-    //       stageDetails?.stages_name ||
-    //       item?.parallel_stages ||
-    //       [];
-
-    //     // ✅ check all stages (parallel case)
-    //     if (Array.isArray(stages) && stages.length > 0) {
-    //       return stages.every((stage) => {
-    //         const stageStatus = (stage?.status || "").toLowerCase();
-
-    //         if (term === "completed") {
-    //           return (
-    //             stageStatus === "completed" ||
-    //             stageStatus === "all_completed" ||
-    //             stageStatus === "complete"
-    //           );
-    //         }
-
-    //         return stageStatus === term;
-    //       });
-    //     }
-
-    //     // ✅ fallback (normal case)
-    //     let mainStatus = (stageDetails?.status || item?.status || "").toLowerCase();
-
-    //     if (term === "completed") {
-    //       return (
-    //         mainStatus === "completed" ||
-    //         mainStatus === "all_completed" ||
-    //         mainStatus === "complete"
-    //       );
-    //     }
-
-    //     return mainStatus === term;
-    //   });
-    // }
-
 
 
     if (selectStatus) {
@@ -423,14 +320,6 @@ const Spool = () => {
       });
     }
 
-
-    // if (isflagged) {
-    //   filtered = filtered.filter(item => {
-    //     const flagStatus = item?.flag_status;
-    //     return flagStatus === 'open'
-    //     // return flagStatus !== null && flagStatus !== undefined && flagStatus !== "" && flagStatus !== "closed";
-    //   });
-    // }
 
     if (isflagged) {
       filtered = filtered.filter((item) => {
@@ -484,43 +373,6 @@ const Spool = () => {
   const currentItems = filteredSpools.slice(startIndex, startIndex + itemsPerPage);
 
 
-  // useEffect(() => {
-  //   if (hasHandledParallel.current) return;
-  //   if (!currentItems?.length) return;
-
-  //   const initialSelected = {};
-
-  //   currentItems.forEach((item) => {
-  //     if (item?.type !== "parallel") return;
-
-  //     const spoolId = item?.spool_id;
-
-  //     const stageId =
-  //       item?.stage_id || item?.parallel_stages?.[0]?.stage_id;
-
-  //     if (!stageId) return;
-
-  //     // collect default selections
-  //     initialSelected[spoolId] = stageId;
-
-  //     // call API per spool
-  //     handleStageChange(stageId, spoolId);
-  //   });
-
-  //   // ✅ set all at once (important)
-  //   setSelectedStage((prev) => ({
-  //     ...initialSelected,
-  //     ...prev,
-  //   }));
-
-  //   // ✅ set once (outside loop)
-  //   hasHandledParallel.current = true;
-  //   setType("parallel");
-
-  // }, [currentItems]);
-
-
-
   useEffect(() => {
     if (!currentItems?.length) return;
 
@@ -561,76 +413,6 @@ const Spool = () => {
 
     setType("parallel");
   }, [currentItems]);
-
-
-
-
-
-
-
-  // const handlenext = (item) => {
-  //   if (!item) return;
-
-  //   const spoolId = item?.spool_id;
-
-  //   const safeSelectedStage = selectedStage || {};
-  //   const safeStageDetails = getstageDetailsData || {};
-  //   const subStageData = selectedSubStage[spoolId] || {};
-  //   const subStageId = subStageData?.sub_stage_id || null;
-
-  //   // ✅ get correct stage id
-  //   const stageId =
-  //     item?.type === "parallel"
-  //       ? safeSelectedStage[spoolId] || item?.stage_id
-  //       : item?.stage_id;
-
-  //   // ✅ get correct status
-  //   const stageData = safeStageDetails[spoolId] || {};
-
-  //   const status =
-  //     item?.type === "parallel"
-  //       ? stageData?.status || item?.status
-  //       : item?.status;
-
-  //   if (item?.message) {
-  //     toast.error(item?.message || "Failed to fetch stage details");
-  //     return;
-  //   }
-
-  //   if (stageData?.status === "blocked") {
-  //     toast.error(stageData?.message || "Please complete QC first!")
-  //     return;
-  //   }
-
-  //   if (status === "all_completed") {
-  //     toast.error("This spool is already completed. Please choose another spool.");
-  //     return;
-  //   }
-
-
-
-  //   navigate("/drawing-spool", 
-  //     if(subStageId){
-  //       state: {
-  //         spool_id: spoolId,
-  //         sub_stage_id: subStageId,
-  //         spool_stage_id: subStageData?.spool_stage_id || stageData?.spool_stage_id || item?.spool_stage_id
-  //       }
-  //     }else{
-  //     state: {
-  //       spool_id: spoolId,
-  //       stage_id: stageId,
-  //     },
-
-  //       // ...(subStageId ? {
-  //       //   sub_stage_id: subStageId,
-  //       //   spool_stage_id: subStageData?.spool_stage_id || stageData?.spool_stage_id || item?.spool_stage_id
-  //       // } : {})
-  //     // },
-  //   });
-
-
-  // };
 
 
   const handlenext = (item) => {
@@ -846,7 +628,15 @@ const Spool = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentItems?.length > 0 ? (
+                    {loading && spools?.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ textAlign: "center", padding: "20px", height: '50vh' }}>
+                          <div className="spinner-border" role="status" style={{ color: background || '#000', height: '50px', width: '50px' }}>
+                            <span className="visually-hidden" >Loading...</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : currentItems?.length > 0 ? (
                       currentItems?.map((item, index) => (
                         <tr key={index}>
                           <td>

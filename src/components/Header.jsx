@@ -73,7 +73,13 @@ const Header = () => {
 
   useEffect(() => {
     dispatch(getNotification());
-  }, []);
+
+    const interval = setInterval(() => {
+      dispatch(getNotification());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));

@@ -9,6 +9,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const selectedEntity = useSelector((state) => state.entity.selected);
   const projectData = useSelector((state) => state?.entity?.project);
+  const loading = useSelector((state) => state?.entity?.loading);
 
   const itemsPerPage = 10;
 
@@ -28,7 +29,7 @@ const Dashboard = () => {
     setSearch(value);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const themColor = selectedEntity?.entity_secondary_color || JSON.parse(localStorage.getItem('selectedEntity'));
     setbackground(themColor)
   }, [selectedEntity]);
@@ -48,8 +49,8 @@ const Dashboard = () => {
       return;
     }
 
- 
-  const handler = setTimeout(() => {
+
+    const handler = setTimeout(() => {
       const filter = projects.filter((item) =>
         item?.project_name?.toLowerCase().includes(search.toLowerCase()),
       );
@@ -98,7 +99,15 @@ const Dashboard = () => {
           <div className="container-fluid">
             <div className="grid-wrap">
               <div className="row">
-                {currentItems?.length > 0 ? (
+                {loading && projects?.length === 0 ? (
+                  <span className="d-block text-center mt-5" style={{ height: '50vh' }}>
+                    {/* <td colSpan={7} style={{ textAlign: "center", padding: "20px", height: '50vh' }}> */}
+                    <div className="spinner-border" role="status" style={{ color: background || '#000', height: '50px', width: '50px' }}>
+                      <span className="visually-hidden" >Loading...</span>
+                    </div>
+                    {/* </td> */}
+                  </span>
+                ) : currentItems?.length > 0 ? (
                   currentItems.map((item) => (
                     <div className="col-lg-4 col-md-6" key={item.id}>
                       <div className="project-item">
