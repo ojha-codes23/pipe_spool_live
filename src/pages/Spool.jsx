@@ -23,10 +23,10 @@ const Spool = () => {
   const dispatch = useDispatch()
   const closedDispatchedRef = useRef(false);
   const timerRef = useRef(null)
-  const itemsPerPage = 10;
 
   const selected = useSelector((state) => state.entity.selected);
   const { projectsData, getstageDetailsData, loading } = useSelector((state) => state.project);
+  const itemsPerPage = projectsData?.pagination?.per_page || 10;
 
 
   console.log("projectsData", projectsData)
@@ -225,7 +225,7 @@ const Spool = () => {
 
   useEffect(() => {
     if (pId) {
-      dispatch(spoolByProject({ project_id: pId }));
+      dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
     }
     const interval = setInterval(() => {
       const currentData = projectsDataRef.current;
@@ -235,14 +235,14 @@ const Spool = () => {
       console.log("isAnySpoolOpen", isAnySpoolOpen)
       if (pId && isAnySpoolOpen) {
         console.log("Polling: Status is OPEN, fetching updates...");
-        dispatch(spoolByProject({ project_id: pId }));
+        dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
       } else {
         console.log("Polling Paused: All spools are CLOSED.");
       }
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [pId, dispatch]);
+  }, [pId, dispatch, currentPage, itemsPerPage]);
 
 
   useEffect(() => {
@@ -368,9 +368,8 @@ const Spool = () => {
 
 
 
-  const totalItems = filteredSpools?.length;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = filteredSpools.slice(startIndex, startIndex + itemsPerPage);
+  const totalItems = projectsData?.pagination?.total || filteredSpools?.length || 0;
+  const currentItems = filteredSpools;
 
 
   useEffect(() => {

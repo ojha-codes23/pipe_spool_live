@@ -64,6 +64,7 @@ const initialState = {
   list: [],
   selected: null,
   project: [],
+  projectPagination: null,
   notifications: [],
   theme: null,
   primaryColor: null,
@@ -118,8 +119,21 @@ const entitySlice = createSlice({
         state.error = null;
       })
       .addCase(selectEntity.fulfilled, (state, action) => {
-        const projects = action.payload.data || [];
+        let projects = [];
+        let pagination = null;
+
+        if (Array.isArray(action.payload.data)) {
+          projects = action.payload.data;
+        } else if (action.payload.data?.projects) {
+          projects = action.payload.data.projects;
+          pagination = action.payload.data.pagination || null;
+        } else {
+          projects = action.payload.data || [];
+        }
+
         state.project = projects;
+        state.projectPagination = pagination;
+        
         const primary = projects?.[0]?.entity?.entity_primary_color;
         const secondary = projects?.[0]?.entity?.entity_secondary_color;
         state.primaryColor = secondary;
