@@ -4,23 +4,25 @@ import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "../commanComponents/Pagination";
 import { useDispatch, useSelector } from "react-redux";
-import { selectEntity } from "../redux/slice/entitySlice";
+// import { selectEntity } from "../redux/slice/entitySlice";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const selectedEntity = useSelector((state) => state.entity.selected);
   const projectData = useSelector((state) => state?.entity?.project);
   const loading = useSelector((state) => state?.entity?.loading);
-  const paginationData = useSelector((state) => state?.entity?.projectPagination);
+  // const paginationData = useSelector((state) => state?.entity?.projectPagination);
 
-  const itemsPerPage = paginationData?.per_page || 10;
+  // const itemsPerPage = paginationData?.per_page || 10;
+  const itemsPerPage = 10;
 
   const [background, setbackground] = useState('')
   const [projects, setProjects] = useState([]);
-  const [currentPage, setCurrentPage] = useState(
-    Number(localStorage.getItem("currentPage")) || 1
-  );
+  // const [currentPage, setCurrentPage] = useState(
+  //   Number(localStorage.getItem("currentPage")) || 1
+  // );
+  const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filteredProjects, setFilteredProjects] = useState([]);
 
@@ -28,11 +30,12 @@ const Dashboard = () => {
     setProjects(projectData);
   }, [projectData]);
 
-  useEffect(() => {
-    if (selectedEntity?.id) {
-       dispatch(selectEntity({ entity_id: selectedEntity.id, pageNo: currentPage, limit: itemsPerPage }));
-    }
-  }, [currentPage, selectedEntity?.id, dispatch, itemsPerPage]);
+  // useEffect(() => {
+  //   if (selectedEntity?.id) {
+  //     //  dispatch(selectEntity({ entity_id: selectedEntity.id, pageNo: currentPage, limit: itemsPerPage }));
+  //     // dispatch(selectEntity({ entity_id: selectedEntity.id }));
+  //   }
+  // }, [selectedEntity?.id, dispatch]);
 
 
   const handleSearch = (e) => {
@@ -71,8 +74,18 @@ const Dashboard = () => {
     return () => clearTimeout(handler);
   }, [search, projects]);
 
-  const totalItems = paginationData?.total || filteredProjects?.length || 0;
-  const currentItems = filteredProjects;
+  // const totalItems = paginationData?.total || filteredProjects?.length || 0;
+  // const currentItems = filteredProjects;
+
+  console.log("filteredProjects", filteredProjects)
+  const totalItems = filteredProjects?.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = filteredProjects?.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
+
+
 
   return (
     <>

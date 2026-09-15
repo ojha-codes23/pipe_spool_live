@@ -26,6 +26,7 @@ const Spool = () => {
 
   const selected = useSelector((state) => state.entity.selected);
   const { projectsData, getstageDetailsData, loading } = useSelector((state) => state.project);
+  // const itemsPerPage = projectsData?.pagination?.per_page || 10;
   const itemsPerPage = projectsData?.pagination?.per_page || 10;
 
 
@@ -223,26 +224,85 @@ const Spool = () => {
   //   // We only watch pId. If we watch flag_status, it resets the timer too fast.
   // }, [pId, dispatch]);
 
+  // useEffect(() => {
+  //   if (pId) {
+  //     // dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
+  //     dispatch(spoolByProject({ project_id: pId }));
+  //   }
+
+  //   const interval = setInterval(() => {
+  //     const currentData = projectsDataRef.current;
+  //     const rawSpools = currentData?.spools || [];
+  //     console.log("projectsData", projectsData)
+  //     const isAnySpoolOpen = rawSpools.some(s => s.flag_status !== "closed");
+  //     console.log("isAnySpoolOpen", isAnySpoolOpen)
+  //     if (pId && isAnySpoolOpen) {
+  //       console.log("Polling: Status is OPEN, fetching updates...");
+  //       // dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
+  //       dispatch(spoolByProject({ project_id: pId }));
+  //     } else {
+  //       console.log("Polling Paused: All spools are CLOSED.");
+  //     }
+  //   }, 30000);
+
+  //   return () => clearInterval(interval);
+  //   // }, [pId, dispatch, currentPage, itemsPerPage]);
+  // }, [pId, dispatch]);
+
+
+
   useEffect(() => {
-    if (pId) {
-      dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
-    }
-    const interval = setInterval(() => {
+    if (!pId) return;
+
+    let isMounted = true;
+
+    const fetchSpools = () => {
+      if (!isMounted) return;
+
       const currentData = projectsDataRef.current;
       const rawSpools = currentData?.spools || [];
-      console.log("projectsData", projectsData)
-      const isAnySpoolOpen = rawSpools.some(s => s.flag_status !== "closed");
-      console.log("isAnySpoolOpen", isAnySpoolOpen)
-      if (pId && isAnySpoolOpen) {
-        console.log("Polling: Status is OPEN, fetching updates...");
-        dispatch(spoolByProject({ project_id: pId, pageNo: currentPage, limit: itemsPerPage }));
-      } else {
-        console.log("Polling Paused: All spools are CLOSED.");
-      }
-    }, 5000);
 
-    return () => clearInterval(interval);
-  }, [pId, dispatch, currentPage, itemsPerPage]);
+      const isAnySpoolOpen = rawSpools.some(
+        s => s.flag_status !== "closed"
+      );
+
+      console.log(
+        "Polling:",
+        new Date().toLocaleTimeString(),
+        "isAnySpoolOpen:",
+        isAnySpoolOpen
+      );
+
+      if (isAnySpoolOpen) {
+        console.log("🔄 Fetching spool data...");
+
+        dispatch(
+          spoolByProject({
+            project_id: pId
+          })
+        );
+      }
+    };
+
+    // Initial API call
+    dispatch(
+      spoolByProject({
+        project_id: pId
+      })
+    );
+
+    // Every 30 seconds
+    const interval = setInterval(fetchSpools, 30000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [pId, dispatch]);
+
+
+
+
 
 
   useEffect(() => {
@@ -368,8 +428,15 @@ const Spool = () => {
 
 
 
-  const totalItems = projectsData?.pagination?.total || filteredSpools?.length || 0;
-  const currentItems = filteredSpools;
+  // const totalItems = projectsData?.pagination?.total || filteredSpools?.length || 0;
+  // const currentItems = filteredSpools;
+
+
+  const totalItems = filteredSpools?.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = filteredSpools.slice(startIndex, startIndex + itemsPerPage);
+
+
 
 
   useEffect(() => {
