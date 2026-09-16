@@ -51,10 +51,15 @@ const Spool = () => {
   const [newStageDetails, setNewStageDetails] = useState({})
   const [parallelStageStatus, setParallelStageStatus] = useState({})
   const [selectedSubStage, setSelectedSubStage] = useState({});
+  const selectedSubStageRef = useRef({});
 
   useEffect(() => {
     selectedStageRef.current = selectedStage;
   }, [selectedStage]);
+
+  useEffect(() => {
+    selectedSubStageRef.current = selectedSubStage;
+  }, [selectedSubStage]);
 
   const handleSubStageChange = async (stageId, spoolId) => {
     try {
@@ -241,6 +246,42 @@ const Spool = () => {
             project_id: pId
           })
         );
+
+        // Re-fetch stage details
+        Object.entries(selectedStageRef.current || {}).forEach(([spoolId, stageId]) => {
+          if (stageId) {
+            dispatch(getstageDetails({
+              project_id: pId,
+              spool_id: spoolId,
+              stage_id: stageId,
+            })).unwrap().then((response) => {
+              if (response?.data) {
+                setNewStageDetails((prev) => ({
+                  ...prev,
+                  [spoolId]: response.data,
+                }));
+              }
+            }).catch(console.error);
+          }
+        });
+
+        // Re-fetch sub-stage details
+        Object.entries(selectedSubStageRef.current || {}).forEach(([spoolId, subStageInfo]) => {
+          if (subStageInfo?.sub_stage_id) {
+            dispatch(getSubStageDetails({
+              project_id: pId,
+              sub_stage_id: subStageInfo.sub_stage_id,
+              spool_id: spoolId,
+            })).unwrap().then((response) => {
+              if (response?.data) {
+                setSelectedSubStage((prev) => ({
+                  ...prev,
+                  [spoolId]: { ...response.data, sub_stage_id: subStageInfo.sub_stage_id }
+                }));
+              }
+            }).catch(console.error);
+          }
+        });
       }
     };
 
