@@ -11,6 +11,7 @@ import Logout from "./Logout";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchSpoolsDrawing } from "../redux/slice/spoolSlice";
 import { toast } from "react-hot-toast";
+import { getSafeStorageItem } from "../utils/safeStorage";
 
 
 const imagebaseUrl = import.meta.env.VITE_IMAGE_URL;
@@ -31,18 +32,20 @@ const Header = () => {
   const hideHeader = ["/spool", "/drawing-spool"].includes(location.pathname);
   const hideLogout = ["/drawing-spool"].includes(location.pathname);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const savedEntity = JSON.parse(localStorage.getItem("selectedEntity"));
+  const user = getSafeStorageItem("user");
+  const savedEntity = getSafeStorageItem("selectedEntity");
 
   const [them, setThem] = useState("");
   const [showLogout, setShowLogoutModal] = useState(false);
   const [notification, setNotification] = useState([]);
 
   useEffect(() => {
+    const storedEntity = getSafeStorageItem("selectedEntity");
     const themColor =
       selectedEntity?.entity_secondary_color ||
-      JSON.parse(localStorage.getItem("selectedEntity"));
-    setThem(themColor);
+      storedEntity?.entity_secondary_color ||
+      (typeof storedEntity === 'string' ? storedEntity : '');
+    setThem(themColor || '');
   }, [selectedEntity]);
   const background = them;
 
@@ -82,7 +85,7 @@ const Header = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
+    const userData = getSafeStorageItem("user");
     if (!userData) return;
     if (selected?.id && !hideHeader) {
       dispatch(selectEntity({ entity_id: selected?.id }));
@@ -316,7 +319,7 @@ const Header = () => {
                                   data-id={item?.id}
                                   key={item?.id}
                                 >
-                                  
+
                                   <Link
                                     to="/drawing-spool"
                                     state={{
@@ -371,24 +374,24 @@ const Header = () => {
                   </button>
                 )}
 
-                 {!hideLogout && (
-               <button
-                  onClick={() =>
-                    window.open("https://admin.rprspooltracker.com/", "_blank")
-                  }
-                  className="logout-cta"
-                  style={{ background }}
-                  type="button"
-                >
-                  Visit Admin{" "}
-                  <i
-                    className="hgi hgi-stroke hgi-square-arrow-up-right"
-                    style={{ marginLeft: "5px" }}
-                  ></i>
-                </button>
+                {!hideLogout && (
+                  <button
+                    onClick={() =>
+                      window.open("https://admin.rprspooltracker.com/", "_blank")
+                    }
+                    className="logout-cta"
+                    style={{ background }}
+                    type="button"
+                  >
+                    Visit Admin{" "}
+                    <i
+                      className="hgi hgi-stroke hgi-square-arrow-up-right"
+                      style={{ marginLeft: "5px" }}
+                    ></i>
+                  </button>
                 )}
 
-              
+
 
               </div>
             </div>

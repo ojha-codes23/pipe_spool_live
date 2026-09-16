@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
 import ReportIssue from "../components/ReportIssue";
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getstageDetails, spoolByProject, } from "../redux/slice/projectSlice";
 import { getSubStageDetails } from "../redux/slice/spoolSlice";
 import { toast } from "react-hot-toast";
+import { getSafeStorageItem } from "../utils/safeStorage";
 
 const status = [
   "ready_to_start",
@@ -27,12 +28,7 @@ const Spool = () => {
   const selected = useSelector((state) => state.entity.selected);
   const { projectsData, getstageDetailsData, loading } = useSelector((state) => state.project);
   // const itemsPerPage = projectsData?.pagination?.per_page || 10;
-  const itemsPerPage = projectsData?.pagination?.per_page || 10;
-
-
-  console.log("projectsData", projectsData)
-
-  console.log("getstageDetailsData", getstageDetailsData)
+  const itemsPerPage = 10;
   const projectsDataRef = useRef(projectsData);
   const [pId, setPid] = useState(null)
   const [spools, setSpools] = useState([]);
@@ -48,9 +44,6 @@ const Spool = () => {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
 
-  console.log(type)
-  // const [handleChnageStage, setHandleChangeStage] = useState(null);
-
   const [selectedStage, setSelectedStage] = useState({});
   const selectedStageRef = useRef({});
 
@@ -59,30 +52,9 @@ const Spool = () => {
   const [parallelStageStatus, setParallelStageStatus] = useState({})
   const [selectedSubStage, setSelectedSubStage] = useState({});
 
-  console.log("newStageDetails", newStageDetails)
-
   useEffect(() => {
     selectedStageRef.current = selectedStage;
   }, [selectedStage]);
-
-  // const handleStageChange =async(stageId, spoolId) => {
-  //   console.log("Stage ID:", stageId);
-  //   console.log("Spool ID:", spoolId);
-
-  //   try {
-  //       const response = await dispatch(getstageDetails({ 
-  //             project_id:projectsData?.project_id,
-  //             spool_id:spoolId,
-  //             stage_id:stageId})).unwrap();
-
-  //             if(response?.data){
-  //                setNewStageDetails(response.data);
-  //             }
-  //   } catch (error) {
-  //      toast.error(error?.message || "Failed to change stage");
-  //   }
-  // };
-
 
   const handleSubStageChange = async (stageId, spoolId) => {
     try {
@@ -105,9 +77,6 @@ const Spool = () => {
   };
 
   const handleStageChange = async (stageId, spoolId) => {
-    console.log("Stage ID:", stageId);
-    console.log("Spool ID:", spoolId);
-
     // Reset sub-stage selection when main stage changes
     setSelectedSubStage((prev) => {
       const newState = { ...prev };
@@ -150,16 +119,6 @@ const Spool = () => {
     }
   };
 
-
-  // useEffect(() => {
-
-  //   handleStageChange()
-
-  // }, [selectedStage])
-
-
-  // console.log(handleChnageStage,"haneleChnageStage")
-
   const prevFiltersRef = useRef({ search, selectStage, selectStatus, isflagged });
   const flag_status = filteredSpools?.[0]?.flag_status;
 
@@ -168,14 +127,12 @@ const Spool = () => {
   }, [projectsData]);
 
   useEffect(() => {
-    const themColor = JSON.parse(localStorage.getItem('selectedEntity'));
-    setThem(themColor?.entity_secondary_color)
+    const themColor = getSafeStorageItem('selectedEntity');
+    setThem(themColor?.entity_secondary_color || (typeof themColor === 'string' ? themColor : ''))
   }, [selected]);
   const background = them;
 
-  // const stages = [...new Set(spools?.map(spool => spool?.stage_name))];
-
-  const stages = [
+  const stages = useMemo(() => [
     ...new Set(
       spools?.flatMap((spool) => {
         if (spool?.type === "parallel") {
@@ -184,16 +141,19 @@ const Spool = () => {
         return spool?.stage_name ? [spool.stage_name] : [];
       })
     ),
-  ];
+  ], [spools]);
 
   useEffect(() => {
+    const savedId = state?.id || sessionStorage.getItem("selectedProjectId");
     if (state?.id) {
-      console.log("state", state)
+      sessionStorage.setItem("selectedProjectId", state.id);
       setPid(state.id);
+    } else if (savedId) {
+      setPid(savedId);
     } else {
-      navigate(-1)
+      navigate("/dashboard");
     }
-  }, [state]);
+  }, [state, navigate]);
 
 
 

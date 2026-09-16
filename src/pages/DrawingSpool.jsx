@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchSpoolsDrawing, resetSpoolDrawingDetails } from '../redux/slice/spoolSlice'
 import { pauseAndResumeTask, reportTask, startAndComplateTask } from '../redux/slice/taskSlice'
 import { toast } from 'react-hot-toast'
+import { getSafeStorageItem } from '../utils/safeStorage'
 const imagebaseUrl = import.meta.env.VITE_IMAGE_URL;
 
 const getActionFromBarcode = (code) => {
@@ -82,8 +83,8 @@ const DrawingSpool = () => {
     const selected = useSelector((state) => state.entity.selected);
 
     useEffect(() => {
-        const themColor = JSON.parse(localStorage.getItem('selectedEntity'));
-        setThem(themColor?.entity_secondary_color)
+        const themColor = getSafeStorageItem('selectedEntity');
+        setThem(themColor?.entity_secondary_color || (typeof themColor === 'string' ? themColor : ''))
     }, [selected]);
     const background = them;
     const [showReportIssue, setShowReportIssue] = useState(false)
@@ -109,7 +110,7 @@ const DrawingSpool = () => {
 
     const onScan = async (eventCall, subStageIdFromScanner = null) => {
         try {
-            const entity_id = JSON.parse(localStorage.getItem('selectedEntity'))?.id
+            const entity_id = getSafeStorageItem('selectedEntity')?.id
             const project_id = spoolDetails?.project?.id
             const spool_id = spoolId
             const stage_id = stageId
@@ -219,13 +220,28 @@ const DrawingSpool = () => {
     }, []);
 
     useEffect(() => {
+        const savedSpoolId = state?.spool_id || sessionStorage.getItem("selectedSpoolId");
+        const savedStageId = state?.stage_id || sessionStorage.getItem("selectedStageId");
+        const savedSubStageId = state?.sub_stage_id || sessionStorage.getItem("selectedSubStageId");
+
         if (state?.spool_id && state?.stage_id) {
-            setSpoolId(state?.spool_id);
-            setStageId(state?.stage_id);
+            sessionStorage.setItem("selectedSpoolId", state.spool_id);
+            sessionStorage.setItem("selectedStageId", state.stage_id);
+            if (state.sub_stage_id) {
+                sessionStorage.setItem("selectedSubStageId", state.sub_stage_id);
+            }
+
+            setSpoolId(state.spool_id);
+            setStageId(state.stage_id);
+            if (state.sub_stage_id) setSubStageid(state.sub_stage_id);
+        } else if (savedSpoolId && savedStageId) {
+            setSpoolId(savedSpoolId);
+            setStageId(savedStageId);
+            if (savedSubStageId) setSubStageid(savedSubStageId);
         } else {
-            navigate(-1)
+            navigate("/spool");
         }
-    }, [state]);
+    }, [state, navigate]);
 
     useEffect(() => {
         const fetchData = async () => {
