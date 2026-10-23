@@ -38,6 +38,9 @@ const Header = () => {
   const [them, setThem] = useState("");
   const [showLogout, setShowLogoutModal] = useState(false);
   const [notification, setNotification] = useState([]);
+  
+  // Calculate unread count locally to avoid stale backend counts
+  const unreadCount = notification?.filter(n => n.is_read === 0).length || 0;
 
   useEffect(() => {
     const storedEntity = getSafeStorageItem("selectedEntity");
@@ -64,8 +67,18 @@ const Header = () => {
     return `${days} day${days > 1 ? "s" : ""} ago`;
   };
 
-  const markAllAsRead = () => {
-    setNotification((prev) => prev?.map((n) => ({ ...n, isUnread: false })));
+  const markAllAsRead = async () => {
+    setNotification((prev) => prev?.map((n) => ({ ...n, isUnread: false, is_read: 1 })));
+    
+    const unreadIds = notification?.filter(n => n.is_read === 0).map(n => String(n.id));
+    if (unreadIds && unreadIds.length > 0) {
+      try {
+        await dispatch(readNotification({ notification_id: unreadIds })).unwrap();
+        dispatch(getNotification());
+      } catch (error) {
+        console.error("Failed to mark all as read", error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -301,9 +314,11 @@ const Header = () => {
                       className="hgi hgi-stroke hgi-notification-01"
                       style={{ color: background }}
                     ></i>
-                    <span className="count" style={{ background: background }}>
-                      {notifications?.notification_count}
-                    </span>
+                    {unreadCount > 0 && (
+                      <span className="count" style={{ background: background }}>
+                        {unreadCount}
+                      </span>
+                    )}
                   </button>
                   <div className="dropdown-menu dropdown-menu-end">
                     <div className="noti-dropdown">
@@ -329,7 +344,7 @@ const Header = () => {
                                     data-id={item?.id}
                                     data-is-read={item?.is_read}
                                     style={{
-                                      fontWeight: item?.isUnread ? "bold" : "normal",
+                                      fontWeight: item?.is_read === 0 ? "bold" : "normal",
                                     }}
                                     onClick={(e) => handleSpoolClick(item, e)}
                                   >
