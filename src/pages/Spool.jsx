@@ -216,90 +216,218 @@ const Spool = () => {
 
 
 
-  useEffect(() => {
-    if (!pId) return;
+  // useEffect(() => {
+  //   if (!pId) return;
 
-    let isMounted = true;
+  //   let isMounted = true;
 
-    const fetchSpools = () => {
-      if (!isMounted) return;
+  //   const fetchSpools = () => {
+  //     if (!isMounted) return;
 
-      const currentData = projectsDataRef.current;
-      const rawSpools = currentData?.spools || [];
+  //     const currentData = projectsDataRef.current;
+  //     const rawSpools = currentData?.spools || [];
 
-      const isAnySpoolOpen = rawSpools.some(
-        s => s.flag_status !== "closed"
-      );
+  //     const isAnySpoolOpen = rawSpools.some(
+  //       s => s.flag_status !== "closed"
+  //     );
 
-      console.log(
-        "Polling:",
-        new Date().toLocaleTimeString(),
-        "isAnySpoolOpen:",
-        isAnySpoolOpen
-      );
+  //     console.log(
+  //       "Polling:",
+  //       new Date().toLocaleTimeString(),
+  //       "isAnySpoolOpen:",
+  //       isAnySpoolOpen
+  //     );
 
-      if (isAnySpoolOpen) {
-        console.log("🔄 Fetching spool data...");
+  //     if (isAnySpoolOpen) {
+  //       console.log("🔄 Fetching spool data...");
 
-        dispatch(
-          spoolByProject({
-            project_id: pId
+  //       dispatch(
+  //         spoolByProject({
+  //           project_id: pId
+  //         })
+  //       );
+
+  //       // Re-fetch stage details
+  //       Object.entries(selectedStageRef.current || {}).forEach(([spoolId, stageId]) => {
+  //         if (stageId) {
+  //           dispatch(getstageDetails({
+  //             project_id: pId,
+  //             spool_id: spoolId,
+  //             stage_id: stageId,
+  //           })).unwrap().then((response) => {
+  //             if (response?.data) {
+  //               setNewStageDetails((prev) => ({
+  //                 ...prev,
+  //                 [spoolId]: response.data,
+  //               }));
+  //             }
+  //           }).catch(console.error);
+  //         }
+  //       });
+
+  //       // Re-fetch sub-stage details
+  //       Object.entries(selectedSubStageRef.current || {}).forEach(([spoolId, subStageInfo]) => {
+  //         if (subStageInfo?.sub_stage_id) {
+  //           dispatch(getSubStageDetails({
+  //             project_id: pId,
+  //             sub_stage_id: subStageInfo.sub_stage_id,
+  //             spool_id: spoolId,
+  //           })).unwrap().then((response) => {
+  //             if (response?.data) {
+  //               setSelectedSubStage((prev) => ({
+  //                 ...prev,
+  //                 [spoolId]: { ...response.data, sub_stage_id: subStageInfo.sub_stage_id }
+  //               }));
+  //             }
+  //           }).catch(console.error);
+  //         }
+  //       });
+  //     }
+  //   };
+
+  //   // Initial API call
+  //   dispatch(
+  //     spoolByProject({
+  //       project_id: pId
+  //     })
+  //   );
+
+  //   // Every 30 seconds
+  //   const interval = setInterval(fetchSpools, 30000);
+
+  //   return () => {
+  //     isMounted = false;
+  //     clearInterval(interval);
+  //   };
+  // }, [pId, dispatch]);
+
+useEffect(() => {
+  if (!pId) return;
+
+  const fetchAllData = async () => {
+    try {
+      // 1. Project API
+      const projectResponse = await dispatch(
+        spoolByProject({
+          project_id: pId,
+        })
+      ).unwrap();
+
+      console.log("PROJECT RESPONSE:", projectResponse);
+
+      const latestSpools =
+        projectResponse?.data?.spools ||
+        projectResponse?.spools ||
+        [];
+
+      // 2. Har parallel spool ka latest stage
+      for (const item of latestSpools) {
+        if (item?.type !== "parallel") continue;
+
+        const spoolId = item?.spool_id;
+
+        const stageId =
+          selectedStageRef.current?.[spoolId] ||
+          item?.parallel_stages?.find(
+            (stage) =>
+              ![
+                "completed",
+                "all_completed",
+                "complete",
+              ].includes(
+                stage?.status?.toLowerCase()
+              )
+          )?.stage_id;
+
+        if (!stageId) continue;
+
+        // 3. Stage detail API
+        const stageResponse = await dispatch(
+          getstageDetails({
+            project_id: pId,
+            spool_id: spoolId,
+            stage_id: stageId,
           })
+        ).unwrap();
+
+        console.log(
+          "STAGE DETAIL RESPONSE:",
+          stageResponse
         );
 
-        // Re-fetch stage details
-        Object.entries(selectedStageRef.current || {}).forEach(([spoolId, stageId]) => {
-          if (stageId) {
-            dispatch(getstageDetails({
-              project_id: pId,
-              spool_id: spoolId,
-              stage_id: stageId,
-            })).unwrap().then((response) => {
-              if (response?.data) {
-                setNewStageDetails((prev) => ({
-                  ...prev,
-                  [spoolId]: response.data,
-                }));
-              }
-            }).catch(console.error);
-          }
-        });
+        if (!stageResponse?.data) continue;
 
-        // Re-fetch sub-stage details
-        Object.entries(selectedSubStageRef.current || {}).forEach(([spoolId, subStageInfo]) => {
-          if (subStageInfo?.sub_stage_id) {
-            dispatch(getSubStageDetails({
-              project_id: pId,
-              sub_stage_id: subStageInfo.sub_stage_id,
-              spool_id: spoolId,
-            })).unwrap().then((response) => {
-              if (response?.data) {
-                setSelectedSubStage((prev) => ({
-                  ...prev,
-                  [spoolId]: { ...response.data, sub_stage_id: subStageInfo.sub_stage_id }
-                }));
-              }
-            }).catch(console.error);
+        setNewStageDetails((prev) => ({
+          ...prev,
+          [spoolId]: stageResponse.data,
+        }));
+
+        // 4. Latest sub-stage
+        const substages =
+          stageResponse.data?.substage_of_stage || [];
+
+        const currentSubStage = substages.find(
+          (sub) => {
+            const s = (
+              sub?.status ||
+              sub?.sub_stage_status ||
+              ""
+            )
+              .toLowerCase()
+              .trim();
+
+            return (
+              s !== "completed" &&
+              s !== "all_completed" &&
+              s !== "complete"
+            );
           }
-        });
+        );
+
+        if (!currentSubStage?.id) continue;
+
+        // 5. Sub-stage detail API
+        const subStageResponse = await dispatch(
+          getSubStageDetails({
+            project_id: pId,
+            sub_stage_id: currentSubStage.id,
+            spool_id: spoolId,
+          })
+        ).unwrap();
+
+        console.log(
+          "SUB STAGE DETAIL RESPONSE:",
+          subStageResponse
+        );
+
+        if (subStageResponse?.data) {
+          setSelectedSubStage((prev) => ({
+            ...prev,
+            [spoolId]: {
+              ...subStageResponse.data,
+              sub_stage_id: currentSubStage.id,
+            },
+          }));
+        }
       }
-    };
+    } catch (error) {
+      console.error(
+        "30 sec polling error:",
+        error
+      );
+    }
+  };
 
-    // Initial API call
-    dispatch(
-      spoolByProject({
-        project_id: pId
-      })
-    );
+  fetchAllData();
 
-    // Every 30 seconds
-    const interval = setInterval(fetchSpools, 30000);
+  const interval = setInterval(() => {
+    fetchAllData();
+  }, 30000);
 
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [pId, dispatch]);
+  return () => {
+    clearInterval(interval);
+  };
+}, [pId, dispatch]);
 
 
 
@@ -440,47 +568,106 @@ const Spool = () => {
 
 
 
+  // useEffect(() => {
+  //   if (!currentItems?.length) return;
+
+  //   const initialSelected = {};
+
+  //   currentItems.forEach((item) => {
+  //     if (item?.type !== "parallel") return;
+
+  //     const spoolId = item?.spool_id;
+
+  //     // If we already selected a stage for this spool, skip
+  //     if (selectedStageRef.current[spoolId]) return;
+
+  //     // ✅ pick first incomplete stage
+  //     const stageId =
+  //       item?.parallel_stages?.find(
+  //         (s) =>
+  //           !["completed", "all_completed", "complete"].includes(
+  //             s?.status?.toLowerCase()
+  //           )
+  //       )?.stage_id ||
+  //       item?.parallel_stages?.[0]?.stage_id;
+
+  //     if (!stageId) return;
+
+  //     initialSelected[spoolId] = stageId;
+
+  //     // ✅ call API
+  //     handleStageChange(stageId, spoolId);
+  //   });
+
+  //   if (Object.keys(initialSelected).length > 0) {
+  //     setSelectedStage((prev) => ({
+  //       ...prev,
+  //       ...initialSelected,
+  //     }));
+  //   }
+
+  //   setType("parallel");
+  // }, [currentItems]);
+
   useEffect(() => {
-    if (!currentItems?.length) return;
+  if (!currentItems?.length) return;
 
-    const initialSelected = {};
+  currentItems.forEach((item) => {
+    if (item?.type !== "parallel") return;
 
-    currentItems.forEach((item) => {
-      if (item?.type !== "parallel") return;
+    const spoolId = item?.spool_id;
 
-      const spoolId = item?.spool_id;
+    // Latest incomplete stage
+    const latestStage =
+      item?.parallel_stages?.find((stage) => {
+        const stageStatus = (
+          stage?.status || ""
+        ).toLowerCase().trim();
 
-      // If we already selected a stage for this spool, skip
-      if (selectedStageRef.current[spoolId]) return;
+        return (
+          stageStatus !== "completed" &&
+          stageStatus !== "all_completed" &&
+          stageStatus !== "complete"
+        );
+      });
 
-      // ✅ pick first incomplete stage
-      const stageId =
-        item?.parallel_stages?.find(
-          (s) =>
-            !["completed", "all_completed", "complete"].includes(
-              s?.status?.toLowerCase()
-            )
-        )?.stage_id ||
-        item?.parallel_stages?.[0]?.stage_id;
+    if (!latestStage?.stage_id) return;
 
-      if (!stageId) return;
+    const latestStageId = latestStage.stage_id;
 
-      initialSelected[spoolId] = stageId;
+    // Current selected stage
+    const currentStageId =
+      selectedStageRef.current?.[spoolId];
 
-      // ✅ call API
-      handleStageChange(stageId, spoolId);
-    });
-
-    if (Object.keys(initialSelected).length > 0) {
-      setSelectedStage((prev) => ({
-        ...prev,
-        ...initialSelected,
-      }));
+    // Same stage already selected -> do nothing
+    if (currentStageId === latestStageId) {
+      return;
     }
 
-    setType("parallel");
-  }, [currentItems]);
+    console.log(
+      "🔄 Stage changed:",
+      spoolId,
+      currentStageId,
+      "→",
+      latestStageId
+    );
 
+    // Update selected stage
+    setSelectedStage((prev) => ({
+      ...prev,
+      [spoolId]: latestStageId,
+    }));
+
+    // IMPORTANT:
+    // Fetch new stage details
+    handleStageChange(
+      latestStageId,
+      spoolId
+    );
+  });
+
+  setType("parallel");
+}, [currentItems]);
 
   const handlenext = (item) => {
     if (!item) return;
